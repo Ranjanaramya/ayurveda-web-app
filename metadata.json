@@ -1,0 +1,6 @@
+{
+  "name": "Ayurveda Hospital",
+  "description": "A comprehensive web portal for a premier Ayurvedic Hospital featuring treatments, specialist profiles, health blogs, appointment booking, and a simulated Sanity CMS schema panel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
