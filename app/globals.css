@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Natural Tones Color Palette mapping to Mint values */
+  --color-mint-50: #f1f8f4;   /* Soft Sage/Cream background */
+  --color-mint-100: #d8f3dc;  /* Accent light green pill/badge background */
+  --color-mint-200: #b7e4c7;  /* Light mint accent color 1 */
+  --color-mint-300: #95d5b2;  /* Light mint accent color 2 */
+  --color-mint-400: #74c69d;  /* Mid-light green */
+  --color-mint-500: #52b788;  /* Vibrant spring green */
+  --color-mint-600: #40916c;  /* Lighter forest green */
+  --color-mint-700: #2d6a4f;  /* Medium forest green */
+  --color-mint-800: #1b4332;  /* Primary brand dark green */
+  --color-mint-900: #0d2e22;  /* Slightly darker brand green */
+  --color-mint-950: #081c15;  /* Deepest dark green / body dark background */
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-mint-200);
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-mint-800);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-mint-400);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
