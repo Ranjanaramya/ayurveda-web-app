@@ -8,9 +8,10 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem('treatment').title('Treatments'),
       S.documentTypeListItem('blog').title('Blog Posts'),
       S.documentTypeListItem('patientInquiry').title('Patient Inquiries'),
+      S.documentTypeListItem('contactMessage').title('Contact Us Messages'),
       ...S.documentTypeListItems().filter(
         (item) =>
           item.getId() &&
-          !['doctor', 'treatment', 'blog', 'patientInquiry'].includes(item.getId()!)
+          !['doctor', 'treatment', 'blog', 'patientInquiry', 'contactMessage'].includes(item.getId()!)
       ),
     ]);

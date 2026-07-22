@@ -315,6 +315,42 @@ const DEFAULT_FAQS: FAQItem[] = [
     question: 'Can Ayurveda cure chronic arthritis and joint pain?',
     answer: 'Yes, Ayurveda is highly effective in treating joint disorders like osteoarthritis, rheumatoid arthritis, and gout. Treatments like Kati Vasti, Janu Vasti, and Patra Pinda Sweda reduce joint inflammation, lubricate joint spaces, regenerate bone tissue, and restore excellent pain-free mobility.',
     category: 'Treatments'
+  },
+  {
+    id: 'faq-5',
+    question: 'Is AyurVeda Care Hospital located in Jaffna accessible for outstation patients?',
+    answer: 'Yes, our hospital at 42 Neem Garden Road, Kopay, Jaffna is easily accessible from all parts of Sri Lanka. We provide residential accommodation facilities for patients requiring extended therapy stays. Our administrative team helps coordinate travel, transport, and accommodation arrangements upon request.',
+    category: 'General'
+  },
+  {
+    id: 'faq-6',
+    question: 'What dietary restrictions should I follow during Ayurvedic treatment?',
+    answer: 'During treatment, our doctors prescribe a personalized Pathya (suitable diet) plan. Generally, freshly cooked warm meals, easily digestible foods like rice, lentils, and cooked vegetables are recommended. Cold, processed, spicy, and heavy foods are typically avoided. Alcohol and smoking should be completely stopped throughout the treatment period.',
+    category: 'Lifestyle'
+  },
+  {
+    id: 'faq-7',
+    question: 'Do you offer treatment for stress, anxiety, and sleep disorders?',
+    answer: 'Absolutely. We specialize in Manasika (mind-related) therapies including Shirodhara, Brahmi-based herbal preparations, Nasyam, and guided Yoga-Pranayama sessions. These are highly effective in calming an overactive nervous system, reducing anxiety and depression, and restoring natural healthy sleep patterns within 7 to 14 days of consistent therapy.',
+    category: 'Treatments'
+  },
+  {
+    id: 'faq-8',
+    question: 'How do I book an appointment at your Jaffna hospital?',
+    answer: 'You can book a consultation through our online appointment form on this website, call us at +94 (21) 222-4567, or WhatsApp us at +94 77 123 4567. Walk-in OPD consultations are also available Mon–Sat from 8:00 AM to 7:00 PM. For specialized Panchakarma or residential programs, advance booking at least 3 to 5 days before is recommended.',
+    category: 'Appointments'
+  },
+  {
+    id: 'faq-9',
+    question: 'Are your herbal medicines prepared in-house or sourced externally?',
+    answer: 'We maintain an in-house GMP-certified herbal preparation unit using fresh herbs from our own organic garden as well as responsibly sourced Western Ghats and Sri Lankan native plant species. All kashayams (decoctions), tailams (oils), and arishtams (fermented formulations) are prepared fresh daily under the direct supervision of our senior Ayurvedic physicians.',
+    category: 'Medicines'
+  },
+  {
+    id: 'faq-10',
+    question: 'Is Ayurvedic treatment suitable for children and elderly patients?',
+    answer: 'Yes, Ayurveda has specialized branches for both children (Kaumarabhritya) and elderly (Rasayana therapy). Treatments are carefully calibrated based on age, body strength (Bala), and constitution. Our pediatric treatments address common issues like respiratory conditions, digestive problems, and immunity. Geriatric programs focus on rejuvenation, joint health, cognitive function, and longevity.',
+    category: 'General'
   }
 ];
 
@@ -389,5 +425,5 @@ export const getTestimonials = (): Testimonial[] => {
 };
 export const saveTestimonials = (testimonials: Testimonial[]) => setStoredData('ayur_testimonials', testimonials);
 
-export const getFAQs = (): FAQItem[] => getStoredData('ayur_faqs', DEFAULT_FAQS);
+export const getFAQs = (): FAQItem[] => getStoredData('ayur_faqs_v2', DEFAULT_FAQS);
 export const getGallery = (): GalleryItem[] => getStoredData('ayur_gallery', DEFAULT_GALLERY);
