@@ -154,7 +154,7 @@ export function Footer() {
                 </h4>
               </div>
               <a
-                href="https://maps.google.com/?q=Trivandrum+Kerala+India"
+                href="https://maps.google.com/?q=Jaffna+Sri+Lanka"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[11px] font-semibold text-mint-400 hover:underline inline-flex items-center"
@@ -166,8 +166,8 @@ export function Footer() {
 
             <div className="relative h-48 sm:h-56 w-full rounded-2xl overflow-hidden border border-white/10 bg-neutral-900">
               <iframe
-                title="AyurVeda Care Hospital Location Map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15783.560126749622!2d76.93663805!3d8.5241391!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b05bbb805bbbbbb%3A0x1!2sThiruvananthapuram%2C+Kerala!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                title="AyurVeda Care Hospital Location Map - Jaffna, Sri Lanka"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31636.99019993636!2d80.00745!3d9.66152!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3afe51d04b9bef37%3A0x38e84c1de1c6ca7c!2sJaffna%2C+Sri+Lanka!5e0!3m2!1sen!2slk!4v1700000000000!5m2!1sen!2slk"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -191,7 +191,10 @@ export function Footer() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 {/* Privacy Policy Block */}
-                <div className="p-4 rounded-2xl bg-neutral-900/60 border border-white/10 hover:border-mint-500/40 transition-all space-y-2">
+                <Link
+                  href="/privacy-policy"
+                  className="p-4 rounded-2xl bg-neutral-900/60 border border-white/10 hover:border-mint-500/40 transition-all space-y-2 block"
+                >
                   <span className="text-xs font-bold text-mint-300 flex items-center">
                     <FileText className="h-3.5 w-3.5 mr-1.5 text-mint-400" />
                     Privacy Policy
@@ -199,10 +202,13 @@ export function Footer() {
                   <p className="text-[11px] text-neutral-300 leading-relaxed">
                     We strictly protect your medical record privacy under Indian Clinical Privacy Standards. Patient records are encrypted and never disclosed.
                   </p>
-                </div>
+                </Link>
 
                 {/* Terms & Conditions Block */}
-                <div className="p-4 rounded-2xl bg-neutral-900/60 border border-white/10 hover:border-mint-500/40 transition-all space-y-2">
+                <Link
+                  href="/terms-and-conditions"
+                  className="p-4 rounded-2xl bg-neutral-900/60 border border-white/10 hover:border-mint-500/40 transition-all space-y-2 block"
+                >
                   <span className="text-xs font-bold text-mint-300 flex items-center">
                     <ShieldCheck className="h-3.5 w-3.5 mr-1.5 text-mint-400" />
                     Terms & Conditions
@@ -210,7 +216,7 @@ export function Footer() {
                   <p className="text-[11px] text-neutral-300 leading-relaxed">
                     Therapy packages require initial OPD Nadi pulse diagnosis. Panchakarma slot cancellations must be logged 24 hours prior.
                   </p>
-                </div>
+                </Link>
               </div>
             </div>
 
@@ -219,8 +225,8 @@ export function Footer() {
                 NABH Accreditation Code: NABH/2026/AYUR-9912
               </span>
               <div className="flex space-x-4 text-[11px] font-semibold">
-                <span className="text-mint-400 hover:underline cursor-pointer">Privacy Guidelines</span>
-                <span className="text-mint-400 hover:underline cursor-pointer">Clinical Terms</span>
+                <Link href="/privacy-policy" className="text-mint-400 hover:underline">Privacy Guidelines</Link>
+                <Link href="/terms-and-conditions" className="text-mint-400 hover:underline">Clinical Terms</Link>
               </div>
             </div>
           </div>
@@ -231,9 +237,8 @@ export function Footer() {
           <p className="text-center md:text-left mb-4 md:mb-0 font-medium">
             &copy; {currentYear} AyurVeda Care Hospital. All Rights Reserved.
           </p>
-          <p className="max-w-md text-center md:text-right text-[10px] leading-normal text-neutral-300/80">
-            Disclaimer: The health information on this website is for informational purposes only and does not
-            substitute professional medical advice, diagnosis, or customized clinical treatments.
+          <p className="max-w-md text-center md:text-right text-[12px] font-semibold text-neutral-300/80">
+            Developed by EdGrow Tech (PVT) LTD.
           </p>
         </div>
       </div>

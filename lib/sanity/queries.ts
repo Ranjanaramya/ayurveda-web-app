@@ -6,7 +6,7 @@ export const doctorsQuery = groq`*[_type == "doctor"] {
   role,
   specialization,
   bio,
-  image,
+  "image": coalesce(image.asset->url, image),
   certifications,
   experience,
   availability,
@@ -77,3 +77,14 @@ export const APPROVED_REVIEWS_QUERY = groq`*[_type == "review" && approved == tr
   approved,
   createdAt
 }`;
+
+export const contactMessagesQuery = groq`*[_type == "contactMessage"] | order(createdAt desc) {
+  "id": _id,
+  name,
+  email,
+  phone,
+  message,
+  createdAt,
+  status
+}`;
+
