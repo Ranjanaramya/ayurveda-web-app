@@ -82,7 +82,7 @@ export default function HomePage() {
         {/* Animated Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <motion.img
-            src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=70"
+            src="https://img.magnific.com/premium-photo/table-with-bowls-ayurvedic-spices_6751-66.jpg"
             alt="Kerala Rainforest Ayurveda Wellness Retreat"
             decoding="async"
             className="h-full w-full object-cover"
@@ -162,11 +162,11 @@ export default function HomePage() {
             >
               <div className="relative mx-auto w-full max-w-md aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-neutral-800 bg-neutral-900">
                 <img
-                  src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80"
-                  alt="Traditional Ayurvedic Herbal Oil Therapy"
-                  className="h-full w-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
+  src="https://img.magnific.com/premium-photo/table-with-bowl-herbs-flowers-it_1281193-695.jpg?semt=ais_hybrid&w=740&q=80"
+  alt="Traditional Ayurvedic Herbal Oil Therapy"
+  className="w-110 h-150 mx-auto object-cover rounded-2xl" 
+  referrerPolicy="no-referrer"
+/>
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent" />
 
                 {/* Floating Certificate Badge */}
