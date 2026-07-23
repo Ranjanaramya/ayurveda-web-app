@@ -16,12 +16,17 @@ import {
   Sparkles,
   MessageSquarePlus,
   UserCheck,
+  Loader2,
 } from 'lucide-react';
 import { getFAQs, getGallery } from '../../lib/mockSanity';
 import { fetchApprovedReviews } from '../../services/reviewService';
 import { Testimonial } from '../../types/common';
 import { useCms } from '../../lib/cmsContext';
 import { PatientReviewModal } from '../../components/home/PatientReviewModal';
+
+// Sanity imports for Gallery dynamic dynamic loading
+import { getTreatments } from '../../services/treatmentService';
+import { urlFor } from '@/sanity/lib/sanity'; // Adjust path if needed
 
 export default function HomePage() {
   const { dataVersion } = useCms();
@@ -32,8 +37,16 @@ export default function HomePage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
+  // Dynamic Sanity State for Gallery Treatments
+  const [sanityTreatments, setSanityTreatments] = useState<any[]>([]);
+  const [isGalleryLoading, setIsGalleryLoading] = useState(false);
+
+  // State for Load More / Show Less feature
+  const INITIAL_GALLERY_LIMIT = 8;
+  const [visibleCount, setVisibleCount] = useState<number>(INITIAL_GALLERY_LIMIT);
+
   const faqs = getFAQs();
-  const gallery = getGallery();
+  const staticGallery = getGallery();
 
   const loadReviews = async () => {
     const data = await fetchApprovedReviews();
@@ -44,10 +57,53 @@ export default function HomePage() {
     loadReviews();
   }, [dataVersion]);
 
+  // Fetch Treatments from Sanity for Gallery Section
+  useEffect(() => {
+    async function loadGalleryTreatments() {
+      try {
+        setIsGalleryLoading(true);
+        const data = await getTreatments();
+        setSanityTreatments(data || []);
+      } catch (err) {
+        console.error('Failed to load treatments for gallery:', err);
+      } finally {
+        setIsGalleryLoading(false);
+      }
+    }
+
+    loadGalleryTreatments();
+  }, []);
+
+  // Format Sanity treatments to match Gallery structure
+  const formattedTreatments = sanityTreatments.map((t) => ({
+    id: t._id,
+    title: t.name || t.title,
+    category: 'Treatments',
+    description: t.description,
+    image: t.image,
+  }));
+
+  // Merge static gallery items with dynamic Sanity treatments
+  const combinedGallery = [...staticGallery, ...formattedTreatments];
+
   const filteredGallery =
     galleryFilter === 'All'
-      ? gallery
-      : gallery.filter((item) => item.category === galleryFilter);
+      ? combinedGallery
+      : combinedGallery.filter(
+          (item) => item.category?.toLowerCase() === galleryFilter.toLowerCase()
+        );
+
+  // Filter மாற்றம் செய்யும்போது லோடிங் எண்ணிக்கையை மீண்டும் ஆரம்ப நிலைக்கு மாற்றும் Effect
+  useEffect(() => {
+    setVisibleCount(INITIAL_GALLERY_LIMIT);
+  }, [galleryFilter]);
+
+  // Helper to safely format image source URLs
+  const getImageSrc = (img: any) => {
+    if (!img) return '/placeholder.jpg';
+    if (typeof img === 'string') return img;
+    return urlFor(img)?.url() || '/placeholder.jpg';
+  };
 
   const specializations = [
     {
@@ -162,11 +218,11 @@ export default function HomePage() {
             >
               <div className="relative mx-auto w-full max-w-md aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-neutral-800 bg-neutral-900">
                 <img
-  src="https://img.magnific.com/premium-photo/table-with-bowl-herbs-flowers-it_1281193-695.jpg?semt=ais_hybrid&w=740&q=80"
-  alt="Traditional Ayurvedic Herbal Oil Therapy"
-  className="w-110 h-150 mx-auto object-cover rounded-2xl" 
-  referrerPolicy="no-referrer"
-/>
+                  src="https://img.magnific.com/premium-photo/table-with-bowl-herbs-flowers-it_1281193-695.jpg?semt=ais_hybrid&w=740&q=80"
+                  alt="Traditional Ayurvedic Herbal Oil Therapy"
+                  className="w-110 h-150 mx-auto object-cover rounded-2xl"
+                  referrerPolicy="no-referrer"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent" />
 
                 {/* Floating Certificate Badge */}
@@ -338,7 +394,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. GALLERY */}
+      {/* 4. GALLERY (DYNAMIC SANITY INTEGRATED + LOAD MORE / SHOW LESS) */}
       <section id="gallery-section" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -372,43 +428,74 @@ export default function HomePage() {
         </div>
 
         {/* Grid with animation */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <AnimatePresence mode="popLayout">
-            {filteredGallery.map((item) => (
-              <motion.div
-                layout
-                key={item.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3 }}
-                className="group rounded-2xl overflow-hidden bg-mint-100 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800 shadow-sm"
-              >
-                <div className="relative aspect-video overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    referrerPolicy="no-referrer"
-                  />
-                  <span className="absolute top-3 left-3 bg-mint-200/95 dark:bg-neutral-950/95 backdrop-blur px-2.5 py-1 rounded-md text-[10px] font-bold text-mint-700 dark:text-mint-400 uppercase tracking-wider shadow-sm">
-                    {item.category}
-                  </span>
-                </div>
-                <div className="p-4 space-y-1.5">
-                  <h3 className="font-serif text-sm font-semibold text-neutral-900 dark:text-white">
-                    {item.title}
-                  </h3>
-                  <p className="text-[11px] text-neutral-500 dark:text-neutral-400 line-clamp-2 leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+        {isGalleryLoading ? (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="h-6 w-6 animate-spin text-mint-600" />
+          </div>
+        ) : (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <AnimatePresence mode="popLayout">
+                {filteredGallery.slice(0, visibleCount).map((item) => (
+                  <motion.div
+                    layout
+                    key={item.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                    className="group rounded-2xl overflow-hidden bg-mint-100 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800 shadow-sm"
+                  >
+                    <div className="relative aspect-video overflow-hidden bg-neutral-200 dark:bg-neutral-800">
+                      <img
+                        src={getImageSrc(item.image)}
+                        alt={item.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        referrerPolicy="no-referrer"
+                      />
+                      <span className="absolute top-3 left-3 bg-mint-200/95 dark:bg-neutral-950/95 backdrop-blur px-2.5 py-1 rounded-md text-[10px] font-bold text-mint-700 dark:text-mint-400 uppercase tracking-wider shadow-sm">
+                        {item.category}
+                      </span>
+                    </div>
+                    <div className="p-4 space-y-1.5">
+                      <h3 className="font-serif text-sm font-semibold text-neutral-900 dark:text-white">
+                        {item.title}
+                      </h3>
+                      <p className="text-[11px] text-neutral-500 dark:text-neutral-400 line-clamp-2 leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+
+            {/* Dynamic Load More / Show Less Button */}
+            {filteredGallery.length > INITIAL_GALLERY_LIMIT && (
+              <div className="flex justify-center pt-4">
+                {visibleCount < filteredGallery.length ? (
+                  <button
+                    onClick={() => setVisibleCount(filteredGallery.length)}
+                    className="inline-flex items-center justify-center rounded-xl bg-mint-600 hover:bg-mint-700 text-white px-6 py-3 text-xs font-semibold uppercase tracking-wider shadow-md transition-all hover:translate-y-[-2px] cursor-pointer"
+                  >
+                    Load More
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setVisibleCount(INITIAL_GALLERY_LIMIT)}
+                    className="inline-flex items-center justify-center rounded-xl bg-neutral-800 hover:bg-neutral-700 text-white px-6 py-3 text-xs font-semibold uppercase tracking-wider shadow-md transition-all hover:translate-y-[-2px] cursor-pointer"
+                  >
+                    Show Less
+                    <ChevronDown className="ml-2 h-4 w-4 rotate-180" />
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </section>
 
       {/* 5. TESTIMONIALS & PATIENT REVIEW SUBMISSION */}

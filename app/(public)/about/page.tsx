@@ -25,7 +25,7 @@ export default function AboutPage() {
         <div className="lg:col-span-5 grid grid-cols-2 gap-4">
           <div className="space-y-4">
             <img
-              src="https://static.toiimg.com/thumb/resizemode-4,width-1280,height-720,msid-122955356/122955356.jpg"
+              src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=400&q=80"
               alt="Ayurveda Herbs preparation"
               className="rounded-2xl w-full aspect-square object-cover shadow-md"
               referrerPolicy="no-referrer"
