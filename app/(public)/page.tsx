@@ -62,6 +62,17 @@ export default function HomePage() {
   const [visibleCount, setVisibleCount] = useState<number>(INITIAL_GALLERY_LIMIT);
 
   const faqs = getFAQs();
+  const visibleFaqs = showAllFaqs ? faqs : faqs.slice(0, 4);
+
+  const getSlotClasses = (slot: number) => {
+    const slots = [
+      'col-start-1 row-start-1',
+      'col-start-2 row-start-1',
+      'col-start-2 row-start-2',
+    ];
+
+    return slots[slot] ?? slots[0];
+  };
 
   const loadReviews = async () => {
     try {
@@ -189,8 +200,8 @@ export default function HomePage() {
             transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/95 via-neutral-950/80 to-neutral-950/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-neutral-950/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/80 via-neutral-950/60 to-neutral-950/25" />
+          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/70 via-transparent to-neutral-950/40" />
           <div className="absolute top-1/4 -left-32 h-96 w-96 rounded-full bg-mint-500/10 blur-3xl" />
         </div>
 
@@ -283,19 +294,7 @@ export default function HomePage() {
                   ))}
                 </div>
 
-                {/* Slide indicator dots */}
-                <div className="absolute top-4 right-4 flex gap-1.5 z-10">
-                  {heroImages.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setHeroSlide(i)}
-                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                        i === heroSlide ? 'w-5 bg-white' : 'w-1.5 bg-white/40'
-                      }`}
-                    />
-                  ))}
-                </div>
-
+                {/* Floating Certificate Badge */}
                 <div className="absolute bottom-6 left-6 right-6 backdrop-blur-md bg-neutral-950/90 rounded-2xl p-4 shadow-lg border border-white/10">
                   <div className="flex items-center space-x-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-800">
@@ -734,7 +733,7 @@ export default function HomePage() {
 
         <div className="space-y-4">
           <AnimatePresence initial={false}>
-            {faqs.map((faq) => {
+            {visibleFaqs.map((faq) => {
               const isOpen = activeFaq === faq.id;
               return (
                 <motion.div
@@ -778,7 +777,7 @@ export default function HomePage() {
         </div>
 
         {/* View More / Show Less Button */}
-        {allFaqs.length > 4 && (
+        {faqs.length > 4 && (
           <div className="flex justify-center pt-2">
             <button
               onClick={() => {

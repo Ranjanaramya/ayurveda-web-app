@@ -20,7 +20,7 @@ export function DoctorImageInput(props: ObjectInputProps) {
       {renderDefault(props)}
 
       {/* Only show action buttons when an image is already uploaded */}
-      {value && (value as Record<string, unknown>).asset && (
+      {value && Boolean((value as Record<string, unknown>).asset) && (
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           {/* Remove button */}
           <button

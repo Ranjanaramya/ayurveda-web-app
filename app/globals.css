@@ -47,3 +47,17 @@ html {
 body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* ── 3-D Flip Card Utilities ───────────────────────────────── */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
