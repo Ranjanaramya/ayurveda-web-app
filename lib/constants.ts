@@ -7,14 +7,14 @@ export const NAV_ITEMS = [
 ];
 
 export const CLINIC_INFO = {
-  phone: '+91 (471) 234-5678',
-  phoneBackup: '+91 (471) 234-5679',
-  whatsapp: '+91 98765 43210',
-  whatsappRaw: '919876543210',
-  emergencyPhone: '+91 471 222-1080',
-  email: 'info@ayurvedacare.org',
-  appointmentEmail: 'appointments@ayurvedacare.org',
-  address: '108 Lotus Temple Road, Ayurveda Nagar, Trivandrum, Kerala - 695001, India',
+  phone: '+94 (21) 222-4567',
+  phoneBackup: '+94 (21) 222-4568',
+  whatsapp: '+94 77 123 4567',
+  whatsappRaw: '94771234567',
+  emergencyPhone: '+94 21 222-9999',
+  email: 'info@ayurvedacare.lk',
+  appointmentEmail: 'appointments@ayurvedacare.lk',
+  address: '42 Neem Garden Road, Kopay, Jaffna - 40000, Sri Lanka',
   hours: {
     outpatients: 'Mon - Sat: 08:00 AM - 07:00 PM | Sunday: 09:00 AM - 02:00 PM',
     therapy: 'Daily Sessions: 06:30 AM - 08:30 PM',

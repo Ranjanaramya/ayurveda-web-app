@@ -29,8 +29,11 @@ export const doctor = defineType({
     }),
     defineField({
       name: 'image',
-      title: 'Profile Photo URL',
-      type: 'url',
+      title: 'Profile Photo',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
     }),
     defineField({
       name: 'certifications',

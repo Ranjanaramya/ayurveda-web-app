@@ -9,4 +9,9 @@ import { Users } from 'lucide-react';
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [doctor, treatment, blog, inquiry, gallery, reviewSchema],
+import { contactMessage } from './contactMessage';
+
+export const schema: { types: SchemaTypeDefinition[] } = {
+  types: [doctor, treatment, blog, inquiry, reviewSchema, contactMessage],
 };
+

@@ -28,6 +28,7 @@ function AppointmentForm() {
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Sync params on mount/change
   useEffect(() => {
@@ -38,25 +39,65 @@ function AppointmentForm() {
     if (treatmentIdParam) setSelectedTreatmentId(treatmentIdParam);
   }, [treatmentIdParam]);
 
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!patientName.trim()) {
+      newErrors.patientName = 'Patient Full Name is required';
+    } else if (patientName.trim().length < 2) {
+      newErrors.patientName = 'Patient Name must be at least 2 characters';
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!email.trim()) {
+      newErrors.email = 'Email Address is required';
+    } else if (!emailRegex.test(email.trim())) {
+      newErrors.email = 'Please enter a valid email address (e.g. user@domain.com)';
+    }
+
+    const phoneDigits = phone.replace(/[^0-9]/g, '');
+    if (!phone.trim()) {
+      newErrors.phone = 'Phone / WhatsApp number is required';
+    } else if (phoneDigits.length < 10) {
+      newErrors.phone = 'Phone number must be at least 10 digits';
+    } else if (phone.length > 15 || phoneDigits.length > 15) {
+      newErrors.phone = 'Phone number cannot exceed 15 digits';
+    }
+
+    if (!preferredDate) {
+      newErrors.preferredDate = 'Preferred Date is required';
+    } else {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const selected = new Date(preferredDate);
+      if (selected < today) {
+        newErrors.preferredDate = 'Preferred date cannot be in the past';
+      }
+    }
+
+    if (message.trim() && message.trim().length < 5) {
+      newErrors.message = 'Description must be at least 5 characters if provided';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!patientName || !email || !phone || !preferredDate) {
-      alert('Please fill out all required fields.');
-      return;
-    }
+    if (!validate()) return;
 
     setSubmitting(true);
 
     try {
       await createPatientInquiry({
-        patientName,
-        email,
-        phone,
+        patientName: patientName.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
         preferredDate,
         preferredTime,
         doctorId: selectedDoctorId || 'any',
         treatmentId: selectedTreatmentId || 'any',
-        message,
+        message: message.trim(),
       });
 
       setSubmitting(false);
@@ -71,6 +112,7 @@ function AppointmentForm() {
       setMessage('');
       setSelectedDoctorId('');
       setSelectedTreatmentId('');
+      setErrors({});
     } catch (err) {
       console.error(err);
       setSubmitting(false);
@@ -81,51 +123,72 @@ function AppointmentForm() {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-16">
       {/* Header */}
-      <div className="text-center max-w-3xl mx-auto space-y-4">
-        <span className="text-xs font-bold text-mint-600 dark:text-mint-405 uppercase tracking-widest block">
-          Schedule & Contact
+      <div className="text-center max-w-3xl mx-auto space-y-3">
+        <span className="text-[11px] font-bold text-[#1B4D3E] dark:text-emerald-400 uppercase tracking-[0.2em] block">
+          Schedule & Consultations
         </span>
-        <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white">
+        <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#1B4D3E] dark:text-emerald-300">
           Book Your Holistic Consultation
         </h1>
-        <p className="text-neutral-600 dark:text-neutral-350 text-sm max-w-xl mx-auto leading-relaxed">
+        <p className="text-neutral-600 dark:text-neutral-400 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
           Take the first step toward customized lifestyle healing. Submit your medical request below, and our
           administration will confirm your slot within 2 business hours.
         </p>
       </div>
 
       {/* Main Content Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-        {/* Left Column: Hospital Info (5 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Column: Emergency Assistance + Hospital Info (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="rounded-3xl bg-neutral-50 dark:bg-neutral-900/40 border border-neutral-200/60 dark:border-neutral-800 p-8 space-y-8 shadow-sm">
-            <h2 className="font-serif text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">
+          {/* Emergency Assistance Notice — top, matching Contact page */}
+          <div className="p-6 rounded-2xl bg-[#FAF6EE] dark:bg-amber-950/30 border border-[#EFE6D5] dark:border-amber-900/40 flex items-start space-x-4 shadow-sm">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E8D9C0] dark:bg-amber-900/60 text-[#A07038] dark:text-amber-400 mt-0.5">
+              <ShieldAlert className="h-5 w-5 animate-pulse" />
+            </div>
+            <div className="text-xs space-y-1">
+              <strong className="text-[#A07038] dark:text-amber-400 font-bold block text-xs tracking-wide">
+                Emergency Assistance:
+              </strong>
+              <p className="text-[#75644C] dark:text-amber-200/80 leading-relaxed text-xs">
+                If you are suffering from acute orthopedic dislocations or severe neural spinal pain, please
+                call our 24/7 dispatch directly at{' '}
+                <strong className="text-[#3B2E1E] dark:text-white font-bold">
+                  {CLINIC_INFO.emergencyPhone}
+                </strong>{' '}
+                for rapid admissions.
+              </p>
+            </div>
+          </div>
+
+          {/* Hospital Info Card */}
+          <div className="rounded-3xl bg-[#FDFBF7] dark:bg-neutral-900/60 border border-[#F0EBE1] dark:border-neutral-800 p-8 space-y-8 shadow-sm">
+            <h2 className="font-serif text-2xl font-bold text-[#1B4D3E] dark:text-emerald-300">
               AyurVeda Care Hospital
             </h2>
             <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-              Our hospital is located in a quiet, pollution-free sector of Kerala, featuring organic herbal
-              gardens, outdoor meditation decks, and pristine clinical suites.
+              Our campus is located in a quiet, pollution-free sector of Kerala, featuring organic herbal
+              gardens, outdoor meditation decks, and pristine climate-controlled clinical suites.
             </p>
 
             <div className="space-y-6">
               {/* Hotlines */}
               <div className="flex items-start space-x-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mint-100 text-mint-750 dark:bg-mint-950/40 dark:text-mint-400">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-emerald-950/60 dark:text-emerald-400">
                   <Phone className="h-5 w-5" />
                 </div>
                 <div>
-                  <span className="block text-xs font-bold text-neutral-400 uppercase tracking-widest mb-0.5">
-                    Consultation Hotlines:
+                  <span className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">
+                    CONSULTATION HOTLINES:
                   </span>
                   <a
                     href={`tel:${CLINIC_INFO.phone.replace(/[^0-9+]/g, '')}`}
-                    className="block text-sm font-semibold text-neutral-900 dark:text-white hover:text-mint-600 transition-colors"
+                    className="block text-sm font-bold text-neutral-900 dark:text-white hover:text-[#1B4D3E] transition-colors"
                   >
                     {CLINIC_INFO.phone}
                   </a>
                   <a
                     href={`tel:${CLINIC_INFO.phoneBackup.replace(/[^0-9+]/g, '')}`}
-                    className="block text-sm font-semibold text-neutral-900 dark:text-white hover:text-mint-600 transition-colors"
+                    className="block text-sm font-bold text-neutral-900 dark:text-white hover:text-[#1B4D3E] transition-colors"
                   >
                     {CLINIC_INFO.phoneBackup}
                   </a>
@@ -134,22 +197,22 @@ function AppointmentForm() {
 
               {/* Emails */}
               <div className="flex items-start space-x-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mint-100 text-mint-700 dark:bg-mint-950/40 dark:text-mint-400">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-emerald-950/60 dark:text-emerald-400">
                   <Mail className="h-5 w-5" />
                 </div>
                 <div>
-                  <span className="block text-xs font-bold text-neutral-400 uppercase tracking-widest mb-0.5">
-                    Official Inquiries:
+                  <span className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">
+                    OFFICIAL INQUIRIES:
                   </span>
                   <a
                     href={`mailto:${CLINIC_INFO.email}`}
-                    className="block text-sm font-semibold text-neutral-900 dark:text-white hover:text-mint-600 transition-colors"
+                    className="block text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white hover:text-[#1B4D3E] transition-colors"
                   >
                     {CLINIC_INFO.email}
                   </a>
                   <a
                     href={`mailto:${CLINIC_INFO.appointmentEmail}`}
-                    className="block text-sm font-semibold text-neutral-900 dark:text-white hover:text-mint-600 transition-colors"
+                    className="block text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white hover:text-[#1B4D3E] transition-colors"
                   >
                     {CLINIC_INFO.appointmentEmail}
                   </a>
@@ -158,12 +221,12 @@ function AppointmentForm() {
 
               {/* Address */}
               <div className="flex items-start space-x-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mint-100 text-mint-700 dark:bg-mint-950/40 dark:text-mint-400">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-emerald-950/60 dark:text-emerald-400">
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <span className="block text-xs font-bold text-neutral-400 uppercase tracking-widest mb-0.5">
-                    Clinical Location:
+                  <span className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">
+                    CLINICAL LOCATION:
                   </span>
                   <p className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed font-medium">
                     {CLINIC_INFO.address}
@@ -173,12 +236,12 @@ function AppointmentForm() {
 
               {/* Hours */}
               <div className="flex items-start space-x-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mint-100 text-mint-700 dark:bg-mint-950/40 dark:text-mint-400">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-emerald-950/60 dark:text-emerald-400">
                   <Clock className="h-5 w-5" />
                 </div>
                 <div>
-                  <span className="block text-xs font-bold text-neutral-400 uppercase tracking-widest mb-0.5">
-                    Admissions & Check-ins:
+                  <span className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">
+                    ADMISSIONS & CHECK-INS:
                   </span>
                   <p className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 font-medium">
                     Open 24 Hours (Residential Treatments) <br />
@@ -188,44 +251,26 @@ function AppointmentForm() {
               </div>
             </div>
           </div>
-
-          {/* Emergency notice */}
-          <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start space-x-3.5">
-            <ShieldAlert className="h-5 w-5 text-amber-500 shrink-0 mt-0.5 animate-pulse" />
-            <div className="text-xs">
-              <strong className="text-amber-805 dark:text-amber-400 block mb-0.5">
-                Emergency Assistance:
-              </strong>
-              <p className="text-neutral-600 dark:text-neutral-300 leading-normal">
-                If you are suffering from acute orthopedic dislocations or severe neural spinal pain, please
-                call our 24/7 emergency dispatch directly at{' '}
-                <strong className="text-neutral-900 dark:text-white font-bold">
-                  {CLINIC_INFO.emergencyPhone}
-                </strong>{' '}
-                for rapid admissions.
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Right Column: Appointment Booking Form (7 cols) */}
         <div id="appointment-form-section" className="lg:col-span-7">
-          <div className="rounded-3xl bg-mint-100 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-805 p-8 shadow-md relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-mint-600 dark:bg-mint-500" />
+          <div className="rounded-3xl bg-[#DDEEE3] dark:bg-neutral-900/90 border border-[#C5DFC8] dark:border-neutral-800 p-8 sm:p-10 shadow-sm space-y-6">
 
             <AnimatePresence mode="wait">
               {!showSuccess ? (
                 <motion.form
                   key="appointment-form"
                   onSubmit={handleSubmit}
+                  noValidate
                   className="space-y-6"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  <div className="flex items-center space-x-2 pb-2">
-                    <Calendar className="h-5 w-5 text-mint-600 dark:text-mint-405" />
-                    <h3 className="font-serif text-lg sm:text-xl font-bold text-neutral-900 dark:text-white">
+                  <div className="flex items-center space-x-2.5 pb-2">
+                    <Calendar className="h-6 w-6 text-[#1B4D3E] dark:text-emerald-400" />
+                    <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1B4D3E] dark:text-emerald-300">
                       Enter Consultation Particulars
                     </h3>
                   </div>
@@ -235,38 +280,57 @@ function AppointmentForm() {
                     <div className="space-y-1.5">
                       <label
                         htmlFor="patient-name"
-                        className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider"
+                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
                       >
-                        Patient Full Name <span className="text-red-500">*</span>
+                        PATIENT FULL NAME <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
                         id="patient-name"
-                        required
                         placeholder="e.g. Senthil Kumar"
                         value={patientName}
-                        onChange={(e) => setPatientName(e.target.value)}
-                        className="w-full rounded-xl bg-neutral-100 dark:bg-neutral-900 border-none px-4 py-3 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-mint-500 text-neutral-800 dark:text-neutral-200"
+                        onChange={(e) => {
+                          setPatientName(e.target.value);
+                          if (errors.patientName) setErrors((prev) => ({ ...prev, patientName: '' }));
+                        }}
+                        className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
+                          errors.patientName ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
+                        } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 shadow-sm`}
                       />
+                      {errors.patientName && <p className="text-xs text-red-500 font-medium mt-1">{errors.patientName}</p>}
                     </div>
 
                     {/* Email address */}
                     <div className="space-y-1.5">
                       <label
                         htmlFor="patient-email"
-                        className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider"
+                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
                       >
-                        Email Address <span className="text-red-500">*</span>
+                        EMAIL ADDRESS <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="email"
                         id="patient-email"
-                        required
                         placeholder="e.g. senthil@gmail.com"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full rounded-xl bg-neutral-100 dark:bg-neutral-900 border-none px-4 py-3 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-mint-500 text-neutral-800 dark:text-neutral-200"
+                        autoComplete="email"
+                        list="appt-email-suggestions"
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+                        }}
+                        className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
+                          errors.email ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
+                        } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 shadow-sm`}
                       />
+                      <datalist id="appt-email-suggestions">
+                        {email.includes('@') ? null : [
+                          '@gmail.com', '@yahoo.com', '@outlook.com', '@hotmail.com', '@icloud.com', '@rediffmail.com'
+                        ].map((domain) => (
+                          <option key={domain} value={`${email.split('@')[0]}${domain}`} />
+                        ))}
+                      </datalist>
+                      {errors.email && <p className="text-xs text-red-500 font-medium mt-1">{errors.email}</p>}
                     </div>
                   </div>
 
@@ -275,52 +339,70 @@ function AppointmentForm() {
                     <div className="space-y-1.5 sm:col-span-1">
                       <label
                         htmlFor="patient-phone"
-                        className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider"
+                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
                       >
-                        Phone / WhatsApp <span className="text-red-500">*</span>
+                        PHONE / WHATSAPP <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="tel"
                         id="patient-phone"
-                        required
                         placeholder="e.g. +91 98765 43210"
+                        maxLength={15}
+                        inputMode="numeric"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="w-full rounded-xl bg-neutral-100 dark:bg-neutral-900 border-none px-4 py-3 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-mint-500 text-neutral-800 dark:text-neutral-200"
+                        onKeyDown={(e) => {
+                          const allowed = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'];
+                          if (allowed.includes(e.key)) return;
+                          if (e.key === '+' && phone.length === 0) return;
+                          if (!/^[0-9]$/.test(e.key)) e.preventDefault();
+                        }}
+                        onChange={(e) => {
+                          setPhone(e.target.value);
+                          if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }));
+                        }}
+                        className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
+                          errors.phone ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
+                        } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 shadow-sm`}
                       />
+                      {errors.phone && <p className="text-xs text-red-500 font-medium mt-1">{errors.phone}</p>}
                     </div>
 
                     {/* Preferred Date */}
                     <div className="space-y-1.5 sm:col-span-1">
                       <label
                         htmlFor="appointment-date"
-                        className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider"
+                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
                       >
-                        Preferred Date <span className="text-red-500">*</span>
+                        PREFERRED DATE <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="date"
                         id="appointment-date"
-                        required
                         value={preferredDate}
-                        onChange={(e) => setPreferredDate(e.target.value)}
-                        className="w-full rounded-xl bg-neutral-100 dark:bg-neutral-900 border-none px-4 py-3 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-mint-500 text-neutral-800 dark:text-neutral-200"
+                        onChange={(e) => {
+                          setPreferredDate(e.target.value);
+                          if (errors.preferredDate) setErrors((prev) => ({ ...prev, preferredDate: '' }));
+                        }}
+                        className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
+                          errors.preferredDate ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
+                        } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 shadow-sm`}
                       />
+                      {errors.preferredDate && <p className="text-xs text-red-500 font-medium mt-1">{errors.preferredDate}</p>}
                     </div>
 
                     {/* Preferred Time */}
                     <div className="space-y-1.5 sm:col-span-1">
                       <label
                         htmlFor="preferred-time"
-                        className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider"
+                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
                       >
-                        Preferred Hours
+                        PREFERRED HOURS
                       </label>
                       <select
                         id="preferred-time"
                         value={preferredTime}
                         onChange={(e) => setPreferredTime(e.target.value)}
-                        className="w-full rounded-xl bg-neutral-100 dark:bg-neutral-900 border-none px-4 py-3 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-mint-500 text-neutral-805 dark:text-neutral-200 cursor-pointer"
+                        className="w-full rounded-xl bg-white dark:bg-neutral-950 border border-[#C8DCD0] dark:border-neutral-800 px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 cursor-pointer shadow-sm"
                       >
                         <option value="08:30 AM - 11:30 AM">Morning (08:30 AM - 11:30 AM)</option>
                         <option value="11:30 AM - 02:00 PM">Mid-Day (11:30 AM - 02:00 PM)</option>
@@ -335,15 +417,15 @@ function AppointmentForm() {
                     <div className="space-y-1.5">
                       <label
                         htmlFor="select-doctor"
-                        className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider"
+                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
                       >
-                        Ayurvedic Consultant Expert
+                        AYURVEDIC CONSULTANT EXPERT
                       </label>
                       <select
                         id="select-doctor"
                         value={selectedDoctorId}
                         onChange={(e) => setSelectedDoctorId(e.target.value)}
-                        className="w-full rounded-xl bg-neutral-100 dark:bg-neutral-900 border-none px-4 py-3 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-mint-500 text-neutral-805 dark:text-neutral-200 cursor-pointer"
+                        className="w-full rounded-xl bg-white dark:bg-neutral-950 border border-[#C8DCD0] dark:border-neutral-800 px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 cursor-pointer shadow-sm"
                       >
                         <option value="">Any Available Specialist</option>
                         {doctors.map((doc) => (
@@ -358,15 +440,15 @@ function AppointmentForm() {
                     <div className="space-y-1.5">
                       <label
                         htmlFor="select-treatment"
-                        className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider"
+                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
                       >
-                        Preferred Therapy/Treatment
+                        PREFERRED THERAPY / TREATMENT
                       </label>
                       <select
                         id="select-treatment"
                         value={selectedTreatmentId}
                         onChange={(e) => setSelectedTreatmentId(e.target.value)}
-                        className="w-full rounded-xl bg-neutral-100 dark:bg-neutral-900 border-none px-4 py-3 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-mint-500 text-neutral-805 dark:text-neutral-200 cursor-pointer"
+                        className="w-full rounded-xl bg-white dark:bg-neutral-950 border border-[#C8DCD0] dark:border-neutral-800 px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 cursor-pointer shadow-sm"
                       >
                         <option value="">General Health Check-up</option>
                         {treatments.map((tr) => (
@@ -382,28 +464,34 @@ function AppointmentForm() {
                   <div className="space-y-1.5">
                     <label
                       htmlFor="symptoms-message"
-                      className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider"
+                      className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
                     >
-                      Describe Symptoms or Recovery Goals
+                      DESCRIBE SYMPTOMS OR RECOVERY GOALS
                     </label>
                     <textarea
                       id="symptoms-message"
                       rows={4}
                       placeholder="e.g. chronic lower lumbar back pain since 6 months, severe sleeping troubles..."
                       value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      className="w-full rounded-xl bg-neutral-100 dark:bg-neutral-900 border-none px-4 py-3 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-mint-500 text-neutral-800 dark:text-neutral-200 resize-none"
+                      onChange={(e) => {
+                        setMessage(e.target.value);
+                        if (errors.message) setErrors((prev) => ({ ...prev, message: '' }));
+                      }}
+                      className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
+                        errors.message ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
+                      } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 resize-none shadow-sm`}
                     />
+                    {errors.message && <p className="text-xs text-red-500 font-medium mt-1">{errors.message}</p>}
                   </div>
 
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full inline-flex items-center justify-center rounded-xl bg-mint-600 hover:bg-mint-700 dark:bg-mint-500 dark:hover:bg-mint-450 text-white font-bold uppercase tracking-wider py-4 text-xs transition-colors shadow-lg shadow-mint-600/10 focus:outline-none disabled:opacity-50 cursor-pointer"
+                    className="w-full inline-flex items-center justify-center rounded-xl bg-[#134E39] hover:bg-[#0E3D2C] text-white font-bold uppercase tracking-wider py-4 text-xs transition-colors shadow-md disabled:opacity-50 cursor-pointer"
                   >
                     {submitting ? (
                       <span className="flex items-center">
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                         </svg>

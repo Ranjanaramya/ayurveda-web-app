@@ -32,11 +32,13 @@ import { urlFor } from '@/sanity/lib/sanity';
 export default function HomePage() {
   const { dataVersion } = useCms();
   const [activeFaq, setActiveFaq] = useState<string | null>(null);
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
   const [galleryFilter, setGalleryFilter] = useState<
     'All' | 'Hospital' | 'Treatments' | 'Herbal Garden' | 'Yoga & Meditation'
   >('All');
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [collageSlots, setCollageSlots] = useState({ img1: 0, dark: 1, img2: 2 });
 
   // Dynamic Sanity States for Gallery & Treatments
   const [sanityGalleryItems, setSanityGalleryItems] = useState<any[]>([]);
@@ -136,21 +138,25 @@ export default function HomePage() {
       icon: <Activity className="h-6 w-6 text-mint-600 dark:text-mint-400" />,
       title: 'Spine & Joint Rehabilitation',
       desc: 'Non-invasive therapies using Kati Vasti, Kizhi, and traditional Marma techniques to treat sciatica, degenerative disks, and arthritic conditions.',
+      image: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=500&q=80',
     },
     {
       icon: <CheckCircle className="h-6 w-6 text-mint-600 dark:text-mint-400" />,
       title: 'Authentic Panchakarma Detox',
       desc: 'Complete 5-fold systemic cleansing customized to restore optimal metabolic rate (Agni) and eliminate cellular toxins (Ama).',
+      image: 'https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=500&q=80',
     },
     {
       icon: <Sprout className="h-6 w-6 text-mint-600 dark:text-mint-400" />,
       title: 'Stress & Burnout Management',
       desc: 'Nourishing Shirodhara and herbal Abhyanga treatments aimed at calming the central nervous system and restoring emotional stability.',
+      image: 'https://images.unsplash.com/photo-1508672019048-805c876b67e2?auto=format&fit=crop&w=500&q=80',
     },
     {
       icon: <Heart className="h-6 w-6 text-mint-600 dark:text-mint-400" />,
       title: 'Chronic Lifestyle Care',
       desc: 'Comprehensive dietary planning and proprietary herbal protocols to successfully manage diabetes, obesity, and gastrointestinal disorders.',
+      image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=500&q=80',
     },
   ];
 
@@ -275,38 +281,75 @@ export default function HomePage() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.7, ease: 'easeOut' }}
-            className="lg:col-span-5 grid grid-cols-2 gap-4"
+            className="lg:col-span-5 grid grid-cols-2 grid-rows-[repeat(2,180px)] sm:grid-rows-[repeat(2,200px)] md:grid-rows-[repeat(2,220px)] gap-4 h-[400px] sm:h-[440px] md:h-[480px]"
           >
-            <div className="space-y-4">
+            {/* Item 1: Herbs Image */}
+            <motion.div
+              layout
+              key="about-collage-img1"
+              transition={{
+                layout: { type: 'spring', stiffness: 45, damping: 14 }
+              }}
+              style={{ perspective: 1000, transformStyle: 'preserve-3d' }}
+              className={`relative rounded-2xl overflow-hidden shadow-md cursor-pointer ${getSlotClasses(collageSlots.img1)}`}
+              whileHover={{ scale: 1.03, rotateY: 5, rotateX: -5 }}
+            >
               <img
                 src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=400&q=80"
                 alt="Ayurveda Herbs preparation"
-                className="rounded-2xl w-full aspect-square object-cover shadow-md"
+                className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
-              <div className="rounded-2xl bg-mint-100 dark:bg-mint-900/30 p-6 flex flex-col justify-center text-center">
-                <span className="block font-serif text-4xl font-bold text-mint-700 dark:text-mint-400">
-                  150+
-                </span>
-                <p className="text-xs font-semibold text-neutral-600 dark:text-neutral-300 mt-1 uppercase tracking-widest">
-                  Rare Native Healing Herbs
-                </p>
-              </div>
+            </motion.div>
+
+            {/* Fixed Item: Green Herbs Count Card */}
+            <div
+              key="about-collage-fixed-green"
+              className="col-start-1 row-start-2 h-[180px] sm:h-[200px] md:h-[220px] rounded-2xl bg-mint-100 dark:bg-mint-900/30 p-6 flex flex-col justify-center text-center shadow-md select-none border border-neutral-200/40 dark:border-neutral-800"
+            >
+              <span className="block font-serif text-4xl font-bold text-mint-700 dark:text-mint-400">
+                150+
+              </span>
+              <p className="text-xs font-semibold text-neutral-600 dark:text-neutral-300 mt-1 uppercase tracking-widest">
+                Rare Native Healing Herbs
+              </p>
             </div>
-            <div className="space-y-4 pt-8">
-              <div className="rounded-2xl bg-neutral-900 text-white dark:bg-neutral-800 p-6 text-center">
-                <span className="block font-serif text-4xl font-bold text-mint-400">98%</span>
-                <p className="text-xs font-semibold text-neutral-400 mt-1 uppercase tracking-widest">
-                  Treatment Satisfaction
-                </p>
-              </div>
+
+            {/* Item 2: Satisfaction Card */}
+            <motion.div
+              layout
+              key="about-collage-dark"
+              transition={{
+                layout: { type: 'spring', stiffness: 45, damping: 14 }
+              }}
+              style={{ perspective: 1000, transformStyle: 'preserve-3d' }}
+              className={`rounded-2xl bg-neutral-900 text-white dark:bg-neutral-800 p-6 text-center flex flex-col justify-center shadow-md select-none cursor-pointer border border-neutral-800 ${getSlotClasses(collageSlots.dark)}`}
+              whileHover={{ scale: 1.03, rotateY: 5, rotateX: -5 }}
+            >
+              <span className="block font-serif text-4xl font-bold text-mint-404">98%</span>
+              <p className="text-xs font-semibold text-neutral-400 mt-1 uppercase tracking-widest">
+                Treatment Satisfaction
+              </p>
+            </motion.div>
+
+            {/* Item 3: Greenhouse Image */}
+            <motion.div
+              layout
+              key="about-collage-img2"
+              transition={{
+                layout: { type: 'spring', stiffness: 45, damping: 14 }
+              }}
+              style={{ perspective: 1000, transformStyle: 'preserve-3d' }}
+              className={`relative rounded-2xl overflow-hidden shadow-md cursor-pointer ${getSlotClasses(collageSlots.img2)}`}
+              whileHover={{ scale: 1.03, rotateY: 5, rotateX: -5 }}
+            >
               <img
                 src="https://images.unsplash.com/photo-1515150144380-bca9f1650ed9?auto=format&fit=crop&w=400&q=80"
                 alt="Herbal greenhouse"
-                className="rounded-2xl w-full aspect-square object-cover shadow-md"
+                className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
-            </div>
+            </motion.div>
           </motion.div>
 
           <motion.div
@@ -392,17 +435,40 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.5, delay: i * 0.08, ease: 'easeOut' }}
-                className="group relative rounded-2xl bg-mint-100 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800 p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-2px]"
+                className="perspective-1000 w-full h-[320px] group cursor-pointer"
               >
-                <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-mint-50 dark:bg-mint-900/30 group-hover:bg-mint-100 dark:group-hover:bg-mint-900/50 transition-colors">
-                  {spec.icon}
+                <div className="relative w-full h-full duration-700 transform-style-3d group-hover:[transform:rotateY(180deg)] transition-all">
+                  {/* Front Face: Image */}
+                  <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden shadow-md border border-neutral-200/60 dark:border-neutral-800 bg-neutral-900">
+                    <img src={spec.image} alt={spec.title} className="w-full h-full object-cover brightness-95 group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/90 via-neutral-950/20 to-transparent flex flex-col justify-end p-6 space-y-2">
+                      <h3 className="font-serif text-lg font-semibold text-white leading-snug drop-shadow">
+                        {spec.title}
+                      </h3>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-mint-305">Hover to Flip</span>
+                    </div>
+                  </div>
+
+                  {/* Back Face: Original Content */}
+                  <div className="absolute inset-0 w-full h-full backface-hidden [transform:rotateY(180deg)] rounded-2xl bg-mint-100 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800 p-6 flex flex-col justify-between shadow-md">
+                    <div>
+                      <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-mint-50 dark:bg-mint-900/30">
+                        {spec.icon}
+                      </div>
+                      <h3 className="font-serif text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                        {spec.title}
+                      </h3>
+                      <p className="text-xs text-neutral-750 dark:text-neutral-400 leading-relaxed">
+                        {spec.desc}
+                      </p>
+                    </div>
+                    
+                    <div className="pt-4 border-t border-neutral-250/50 dark:border-neutral-800 flex items-center justify-between">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-mint-600 dark:text-mint-400">Ayurvedic Division</span>
+                      <div className="h-2 w-2 rounded-full bg-mint-500 animate-pulse" />
+                    </div>
+                  </div>
                 </div>
-                <h3 className="font-serif text-lg font-semibold text-neutral-900 dark:text-white mb-2">
-                  {spec.title}
-                </h3>
-                <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                  {spec.desc}
-                </p>
               </motion.div>
             ))}
           </div>
@@ -623,47 +689,78 @@ export default function HomePage() {
         </div>
 
         <div className="space-y-4">
-          {faqs.map((faq) => {
-            const isOpen = activeFaq === faq.id;
-            return (
-              <motion.div
-                key={faq.id}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-20px' }}
-                transition={{ duration: 0.4 }}
-                className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-mint-100 dark:bg-neutral-950 overflow-hidden"
-              >
-                <button
-                  onClick={() => setActiveFaq(isOpen ? null : faq.id)}
-                  className="w-full flex items-center justify-between p-5 text-left font-medium text-neutral-900 dark:text-white hover:bg-mint-200/40 dark:hover:bg-neutral-900/30 transition-colors focus:outline-none cursor-pointer"
+          <AnimatePresence initial={false}>
+            {faqs.map((faq) => {
+              const isOpen = activeFaq === faq.id;
+              return (
+                <motion.div
+                  key={faq.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35 }}
+                  className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-mint-100 dark:bg-neutral-950 overflow-hidden"
                 >
-                  <span className="font-serif text-base sm:text-lg">{faq.question}</span>
-                  <ChevronDown
-                    className={`h-5 w-5 text-neutral-400 shrink-0 transition-transform duration-200 ${
-                      isOpen ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: 'auto' }}
-                      exit={{ height: 0 }}
-                      transition={{ duration: 0.25 }}
-                      className="overflow-hidden border-t border-neutral-100 dark:border-neutral-800"
-                    >
-                      <div className="p-5 text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed bg-mint-50/50 dark:bg-neutral-900/10">
-                        {faq.answer}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
+                  <button
+                    onClick={() => setActiveFaq(isOpen ? null : faq.id)}
+                    className="w-full flex items-center justify-between p-5 text-left font-medium text-neutral-900 dark:text-white hover:bg-mint-200/40 dark:hover:bg-neutral-900/30 transition-colors focus:outline-none cursor-pointer"
+                  >
+                    <span className="font-serif text-base sm:text-lg">{faq.question}</span>
+                    <ChevronDown
+                      className={`h-5 w-5 text-neutral-400 shrink-0 transition-transform duration-200 ${
+                        isOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: 'auto' }}
+                        exit={{ height: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="overflow-hidden border-t border-neutral-100 dark:border-neutral-800"
+                      >
+                        <div className="p-5 text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed bg-mint-50/50 dark:bg-neutral-900/10">
+                          {faq.answer}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
         </div>
+
+        {/* View More / Show Less Button */}
+        {allFaqs.length > 4 && (
+          <div className="flex justify-center pt-2">
+            <button
+              onClick={() => {
+                setShowAllFaqs((prev) => !prev);
+                setActiveFaq(null);
+                if (showAllFaqs) {
+                  // Scroll back to FAQ section top when collapsing
+                  document.getElementById('faq-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-[#134E39] hover:bg-[#0E3D2C] text-white text-xs font-bold uppercase tracking-wider shadow-md transition-all cursor-pointer"
+            >
+              {showAllFaqs ? (
+                <>
+                  <ChevronDown className="h-4 w-4 rotate-180 transition-transform" />
+                  Show Less
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="h-4 w-4 transition-transform" />
+                  View All
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </section>
     </div>
   );
