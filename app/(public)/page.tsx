@@ -16,12 +16,18 @@ import {
   Sparkles,
   MessageSquarePlus,
   UserCheck,
+  Loader2,
 } from 'lucide-react';
-import { getFAQs, getGallery } from '../../lib/mockSanity';
+import { getFAQs } from '../../lib/mockSanity';
 import { fetchApprovedReviews } from '../../services/reviewService';
 import { Testimonial } from '../../types/common';
 import { useCms } from '../../lib/cmsContext';
 import { PatientReviewModal } from '../../components/home/PatientReviewModal';
+
+// Sanity imports for Gallery dynamic loading
+import { getTreatments } from '../../services/treatmentService';
+import { getGalleryItems } from '../../services/galleryService';
+import { urlFor } from '@/sanity/lib/sanity';
 
 export default function HomePage() {
   const { dataVersion } = useCms();
@@ -34,47 +40,98 @@ export default function HomePage() {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [collageSlots, setCollageSlots] = useState({ img1: 0, dark: 1, img2: 2 });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCollageSlots((prev) => ({
-        img1: (prev.img1 + 1) % 3,
-        dark: (prev.dark + 1) % 3,
-        img2: (prev.img2 + 1) % 3,
-      }));
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  // Dynamic Sanity States for Gallery & Treatments
+  const [sanityGalleryItems, setSanityGalleryItems] = useState<any[]>([]);
+  const [sanityTreatments, setSanityTreatments] = useState<any[]>([]);
+  const [isGalleryLoading, setIsGalleryLoading] = useState(false);
 
-  const getSlotClasses = (slot: number) => {
-    switch (slot) {
-      case 0:
-        return 'col-start-1 row-start-1 h-[180px] sm:h-[200px] md:h-[220px] transition-all duration-500';
-      case 1:
-        return 'col-start-2 row-start-1 h-[180px] sm:h-[200px] md:h-[220px] mt-8 transition-all duration-500';
-      case 2:
-        return 'col-start-2 row-start-2 h-[180px] sm:h-[200px] md:h-[220px] mt-8 transition-all duration-500';
-      default:
-        return '';
-    }
-  };
+  // State for Load More / Show Less feature
+  const INITIAL_GALLERY_LIMIT = 8;
+  const [visibleCount, setVisibleCount] = useState<number>(INITIAL_GALLERY_LIMIT);
 
-  const allFaqs = getFAQs();
-  const faqs = showAllFaqs ? allFaqs : allFaqs.slice(0, 4);
-  const gallery = getGallery();
+  const faqs = getFAQs();
 
   const loadReviews = async () => {
-    const data = await fetchApprovedReviews();
-    setTestimonials(data);
+    try {
+      const data = await fetchApprovedReviews();
+      setTestimonials(data || []);
+    } catch (err) {
+      console.error('Error loading reviews:', err);
+    }
   };
 
   useEffect(() => {
     loadReviews();
   }, [dataVersion]);
 
-  const filteredGallery =
-    galleryFilter === 'All'
-      ? gallery
-      : gallery.filter((item) => item.category === galleryFilter);
+  // Fetch both Gallery Items and Treatments from Sanity
+  useEffect(() => {
+    async function loadAllGalleryData() {
+      try {
+        setIsGalleryLoading(true);
+        const [treatmentsData, galleryData] = await Promise.all([
+          getTreatments(),
+          getGalleryItems(),
+        ]);
+        setSanityTreatments(Array.isArray(treatmentsData) ? treatmentsData : []);
+        setSanityGalleryItems(Array.isArray(galleryData) ? galleryData : []);
+      } catch (err) {
+        console.error('Failed to load gallery data:', err);
+      } finally{
+        setIsGalleryLoading(false);
+      }
+    }
+
+    loadAllGalleryData();
+  }, [dataVersion]);
+
+  // Format Sanity treatments to match Gallery structure safely
+  const formattedTreatments = sanityTreatments.map((t) => ({
+    id: t._id || Math.random().toString(),
+    title: t.name || t.title || 'Treatment',
+    category: 'Treatments',
+    description: t.description || '',
+    image: t.image,
+  }));
+
+  // Format Sanity Gallery items safely
+  const formattedGalleryItems = sanityGalleryItems.map((g) => ({
+    id: g._id || Math.random().toString(),
+    title: g.title || 'Gallery Item',
+    category: g.category || 'Hospital',
+    description: g.description || '',
+    image: g.image,
+  }));
+
+  // Merge Sanity Gallery items with Sanity Treatments
+  const combinedGallery = [...formattedGalleryItems, ...formattedTreatments];
+
+  // Filter Logic - Case-insensitive & Whitespace handling
+  const filteredGallery = combinedGallery.filter((item) => {
+    if (galleryFilter === 'All') return true;
+    if (!item.category) return false;
+
+    const itemCat = String(item.category).trim().toLowerCase();
+    const filterCat = String(galleryFilter).trim().toLowerCase();
+
+    return itemCat === filterCat;
+  });
+
+  // Reset visible limit on filter change
+  useEffect(() => {
+    setVisibleCount(INITIAL_GALLERY_LIMIT);
+  }, [galleryFilter]);
+
+  // Safe image URL resolver
+  const getImageSrc = (img: any) => {
+    if (!img) return '/placeholder.jpg';
+    if (typeof img === 'string') return img;
+    try {
+      return urlFor(img)?.url() || '/placeholder.jpg';
+    } catch {
+      return '/placeholder.jpg';
+    }
+  };
 
   const specializations = [
     {
@@ -105,15 +162,14 @@ export default function HomePage() {
 
   return (
     <div className="space-y-24 pb-20 pt-16">
-      {/* 1. HERO SECTION WITH ANIMATED NATURE BACKGROUND */}
+      {/* 1. HERO SECTION */}
       <section
         id="hero-section"
         className="relative pt-20 pb-24 md:pt-32 md:pb-28 overflow-hidden bg-neutral-950 text-white"
       >
-        {/* Animated Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <motion.img
-            src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=70"
+            src="https://img.magnific.com/premium-photo/table-with-bowls-ayurvedic-spices_6751-66.jpg"
             alt="Kerala Rainforest Ayurveda Wellness Retreat"
             decoding="async"
             className="h-full w-full object-cover"
@@ -121,7 +177,6 @@ export default function HomePage() {
             transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
             referrerPolicy="no-referrer"
           />
-          {/* Gradient & Vignette Layers */}
           <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/95 via-neutral-950/80 to-neutral-950/40" />
           <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-neutral-950/60" />
           <div className="absolute top-1/4 -left-32 h-96 w-96 rounded-full bg-mint-500/10 blur-3xl" />
@@ -129,7 +184,6 @@ export default function HomePage() {
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            {/* Left Column Text */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -167,7 +221,6 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Live Status Summary Stats */}
               <div className="grid grid-cols-3 gap-6 pt-8 border-t border-neutral-800/80">
                 <div>
                   <span className="block font-serif text-3xl font-bold text-mint-400">25,000+</span>
@@ -184,7 +237,6 @@ export default function HomePage() {
               </div>
             </motion.div>
 
-            {/* Right Column Image */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -193,14 +245,13 @@ export default function HomePage() {
             >
               <div className="relative mx-auto w-full max-w-md aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-neutral-800 bg-neutral-900">
                 <img
-                  src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80"
+                  src="https://img.magnific.com/premium-photo/table-with-bowl-herbs-flowers-it_1281193-695.jpg?semt=ais_hybrid&w=740&q=80"
                   alt="Traditional Ayurvedic Herbal Oil Therapy"
-                  className="h-full w-full object-cover"
+                  className="w-110 h-150 mx-auto object-cover rounded-2xl"
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent" />
 
-                {/* Floating Certificate Badge */}
                 <div className="absolute bottom-6 left-6 right-6 backdrop-blur-md bg-neutral-950/90 rounded-2xl p-4 shadow-lg border border-white/10">
                   <div className="flex items-center space-x-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-800">
@@ -222,10 +273,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. ABOUT SECTION (HOSPITAL CERTIFICATION) */}
+      {/* 2. ABOUT SECTION */}
       <section id="about-section" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Visual Collage */}
           <motion.div
             initial={{ opacity: 0, x: -35 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -302,7 +352,6 @@ export default function HomePage() {
             </motion.div>
           </motion.div>
 
-          {/* Right Core Description */}
           <motion.div
             initial={{ opacity: 0, x: 35 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -325,7 +374,6 @@ export default function HomePage() {
               medical hygiene and modern safety standards.
             </p>
 
-            {/* List of Certifications */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               {[
                 'National Quality Assurance Standards (NQAS)',
@@ -366,7 +414,6 @@ export default function HomePage() {
         className="bg-neutral-50 dark:bg-neutral-900/50 py-20 border-y border-neutral-100 dark:border-neutral-800"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
-          {/* Header */}
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
               What We Excel In
@@ -380,21 +427,6 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* 3D Flash Card styles scoped to this section */}
-          <style dangerouslySetInnerHTML={{__html: `
-            .perspective-1000 {
-              perspective: 1000px;
-            }
-            .transform-style-3d {
-              transform-style: preserve-3d;
-            }
-            .backface-hidden {
-              backface-visibility: hidden;
-              -webkit-backface-visibility: hidden;
-            }
-          `}} />
-
-          {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {specializations.map((spec, i) => (
               <motion.div
@@ -443,9 +475,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. GALLERY */}
+      {/* 4. GALLERY (DYNAMIC SANITY INTEGRATED) */}
       <section id="gallery-section" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
-        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-2">
             <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
@@ -466,7 +497,7 @@ export default function HomePage() {
                   className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all focus:outline-none cursor-pointer ${
                     galleryFilter === cat
                       ? 'bg-mint-600 text-white dark:bg-mint-500'
-                      : 'bg-neutral-100 text-neutral-650 dark:bg-neutral-800 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-705'
+                      : 'bg-neutral-100 text-neutral-650 dark:bg-neutral-800 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
                   }`}
                 >
                   {cat}
@@ -477,43 +508,82 @@ export default function HomePage() {
         </div>
 
         {/* Grid with animation */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <AnimatePresence mode="popLayout">
-            {filteredGallery.map((item) => (
-              <motion.div
-                layout
-                key={item.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3 }}
-                className="group rounded-2xl overflow-hidden bg-mint-100 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800 shadow-sm"
-              >
-                <div className="relative aspect-video overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    referrerPolicy="no-referrer"
-                  />
-                  <span className="absolute top-3 left-3 bg-mint-200/95 dark:bg-neutral-950/95 backdrop-blur px-2.5 py-1 rounded-md text-[10px] font-bold text-mint-700 dark:text-mint-400 uppercase tracking-wider shadow-sm">
-                    {item.category}
-                  </span>
-                </div>
-                <div className="p-4 space-y-1.5">
-                  <h3 className="font-serif text-sm font-semibold text-neutral-900 dark:text-white">
-                    {item.title}
-                  </h3>
-                  <p className="text-[11px] text-neutral-500 dark:text-neutral-400 line-clamp-2 leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+        {isGalleryLoading ? (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="h-6 w-6 animate-spin text-mint-600" />
+          </div>
+        ) : (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <AnimatePresence mode="popLayout">
+                {filteredGallery.slice(0, visibleCount).map((item) => (
+                  <motion.div
+                    layout
+                    key={item.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                    className="group rounded-2xl overflow-hidden bg-mint-100 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800 shadow-sm"
+                  >
+                    <div className="relative aspect-video overflow-hidden bg-neutral-200 dark:bg-neutral-800">
+                      <img
+                        src={getImageSrc(item.image)}
+                        alt={item.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        referrerPolicy="no-referrer"
+                      />
+                      <span className="absolute top-3 left-3 bg-mint-200/95 dark:bg-neutral-950/95 backdrop-blur px-2.5 py-1 rounded-md text-[10px] font-bold text-mint-700 dark:text-mint-400 uppercase tracking-wider shadow-sm">
+                        {item.category}
+                      </span>
+                    </div>
+                    <div className="p-4 space-y-1.5">
+                      <h3 className="font-serif text-sm font-semibold text-neutral-900 dark:text-white">
+                        {item.title}
+                      </h3>
+                      {item.description && (
+                        <p className="text-[11px] text-neutral-500 dark:text-neutral-400 line-clamp-2 leading-relaxed">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+
+            {filteredGallery.length === 0 && (
+              <p className="text-center text-neutral-500 py-8 text-sm">
+                இந்த Category-இல் படங்கள் எதுவும் இல்லை. Sanity Studio-வில் சேர்க்கவும்.
+              </p>
+            )}
+
+            {/* Dynamic Load More / Show Less Button */}
+            {filteredGallery.length > INITIAL_GALLERY_LIMIT && (
+              <div className="flex justify-center pt-4">
+                {visibleCount < filteredGallery.length ? (
+                  <button
+                    onClick={() => setVisibleCount(filteredGallery.length)}
+                    className="inline-flex items-center justify-center rounded-xl bg-mint-600 hover:bg-mint-700 text-white px-6 py-3 text-xs font-semibold uppercase tracking-wider shadow-md transition-all hover:translate-y-[-2px] cursor-pointer"
+                  >
+                    Load More
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setVisibleCount(INITIAL_GALLERY_LIMIT)}
+                    className="inline-flex items-center justify-center rounded-xl bg-neutral-800 hover:bg-neutral-700 text-white px-6 py-3 text-xs font-semibold uppercase tracking-wider shadow-md transition-all hover:translate-y-[-2px] cursor-pointer"
+                  >
+                    Show Less
+                    <ChevronDown className="ml-2 h-4 w-4 rotate-180" />
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </section>
 
       {/* 5. TESTIMONIALS & PATIENT REVIEW SUBMISSION */}
@@ -522,7 +592,6 @@ export default function HomePage() {
         className="bg-mint-105/50 dark:bg-neutral-900/50 py-20 border-y border-neutral-200 dark:border-neutral-800"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
-          {/* Header & Write Review Button */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-3 max-w-2xl">
               <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
@@ -536,7 +605,6 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Write Patient Review Button */}
             <button
               onClick={() => setIsReviewModalOpen(true)}
               className="inline-flex items-center justify-center rounded-xl bg-mint-600 hover:bg-mint-700 dark:bg-mint-500 dark:hover:bg-mint-400 text-white font-bold text-xs uppercase tracking-wider px-5 py-3.5 shadow-md hover:translate-y-[-2px] transition-all cursor-pointer shrink-0"
@@ -546,11 +614,10 @@ export default function HomePage() {
             </button>
           </div>
 
-          {/* Testimonials Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((t, index) => (
               <motion.div
-                key={t.id}
+                key={t.id || index}
                 initial={{ opacity: 0, y: 35 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
@@ -560,7 +627,7 @@ export default function HomePage() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex text-amber-400">
-                      {[...Array(t.rating)].map((_, i) => (
+                      {[...Array(t.rating || 5)].map((_, i) => (
                         <Star key={i} className="h-4 w-4 fill-current" />
                       ))}
                     </div>
@@ -578,7 +645,7 @@ export default function HomePage() {
 
                 <div className="flex items-center space-x-3.5 pt-4 border-t border-neutral-100 dark:border-neutral-800">
                   <img
-                    src={t.avatar}
+                    src={t.avatar || '/placeholder-user.jpg'}
                     alt={t.name}
                     className="h-10 w-10 rounded-full object-cover shrink-0 bg-neutral-100"
                     referrerPolicy="no-referrer"
@@ -588,7 +655,7 @@ export default function HomePage() {
                       {t.name}
                     </span>
                     <span className="block text-[10px] text-neutral-400">{t.location}</span>
-                    <span className="inline-block mt-1 text-[10px] font-medium bg-mint-50 dark:bg-mint-900/30 text-mint-700 dark:text-mint-305 px-2 py-0.5 rounded-full">
+                    <span className="inline-block mt-1 text-[10px] font-medium bg-mint-50 dark:bg-mint-900/30 text-mint-700 dark:text-mint-300 px-2 py-0.5 rounded-full">
                       Tx: {t.treatmentReceived}
                     </span>
                   </div>
@@ -621,7 +688,6 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Accordions */}
         <div className="space-y-4">
           <AnimatePresence initial={false}>
             {faqs.map((faq) => {

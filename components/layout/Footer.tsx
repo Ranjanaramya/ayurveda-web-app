@@ -15,7 +15,7 @@ export function Footer() {
       {/* Background Nature Image & Interactive Hover Lighting */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img
-          src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1200&q=70"
+          src="https://static.toiimg.com/thumb/resizemode-4,width-1280,height-720,msid-122955356/122955356.jpg"
           alt="Ayurveda Herbal Forest Background"
           loading="lazy"
           decoding="async"

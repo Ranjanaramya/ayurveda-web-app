@@ -9,3 +9,6 @@ export async function getTreatmentsList(): Promise<Treatment[]> {
     return [];
   }
 }
+
+// Gallery Component-kkaga getTreatments export-um identical-a irukka alias panni irukkom
+export const getTreatments = getTreatmentsList;
