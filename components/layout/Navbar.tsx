@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, Sun, Moon, Leaf } from 'lucide-react';
-import { motion } from 'motion/react';
 import { NAV_ITEMS } from '../../lib/constants';
 import { MobileMenu } from './MobileMenu';
 
@@ -56,27 +55,20 @@ export function Navbar({
           </Link>
 
           {/* Desktop Nav */}
-          <nav id="desktop-nav" className="hidden md:flex items-center space-x-8">
+          <nav id="desktop-nav" className="hidden md:flex items-center gap-1.5">
             {NAV_ITEMS.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`relative py-2 text-sm font-medium transition-colors hover:text-mint-600 dark:hover:text-mint-400 focus:outline-none ${
+                  className={`relative px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 focus:outline-none ${
                     isActive
-                      ? 'text-mint-700 dark:text-mint-300 font-semibold'
-                      : 'text-neutral-600 dark:text-neutral-300'
+                      ? 'bg-mint-600 text-white dark:bg-mint-500 dark:text-white shadow-sm'
+                      : 'bg-neutral-100/80 text-neutral-800 hover:bg-mint-50 hover:text-mint-700 dark:bg-neutral-800/60 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:hover:text-mint-300 border border-neutral-200/60 dark:border-neutral-700/50'
                   }`}
                 >
                   {item.label}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeTabUnderline"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-mint-600 dark:bg-mint-400"
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
                 </Link>
               );
             })}

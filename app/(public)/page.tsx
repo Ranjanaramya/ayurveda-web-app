@@ -33,6 +33,18 @@ export default function HomePage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [collageSlots, setCollageSlots] = useState({ img1: 0, dark: 1, img2: 2 });
+  const [heroSlide, setHeroSlide] = useState(0);
+
+  const heroImages = [
+    {
+      src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80',
+      alt: 'Yoga at sunset — traditional wellness',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80',
+      alt: 'Traditional Ayurvedic herb preparation and wellness',
+    },
+  ];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -44,6 +56,13 @@ export default function HomePage() {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    const heroTimer = setInterval(() => {
+      setHeroSlide((prev) => (prev + 1) % heroImages.length);
+    }, 4000);
+    return () => clearInterval(heroTimer);
+  }, [heroImages.length]);
 
   const getSlotClasses = (slot: number) => {
     switch (slot) {
@@ -122,8 +141,8 @@ export default function HomePage() {
             referrerPolicy="no-referrer"
           />
           {/* Gradient & Vignette Layers */}
-          <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/95 via-neutral-950/80 to-neutral-950/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-neutral-950/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/75 via-neutral-950/55 to-neutral-950/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/70 via-transparent to-neutral-950/30" />
           <div className="absolute top-1/4 -left-32 h-96 w-96 rounded-full bg-mint-500/10 blur-3xl" />
         </div>
 
@@ -137,8 +156,14 @@ export default function HomePage() {
               className="space-y-6"
             >
               <div className="inline-flex items-center space-x-1.5 rounded-full bg-mint-900/80 border border-mint-500/30 px-3.5 py-1.5 text-xs font-semibold text-mint-300 backdrop-blur-md shadow-md">
-                <Sparkles className="h-3.5 w-3.5 text-mint-400" />
-                <span>Traditional Kerala Ayurvedic Medicine</span>
+                <motion.span
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+                  className="inline-flex"
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-mint-400" />
+                </motion.span>
+                <span>Traditional Srilankan Ayurvedic Medicine</span>
               </div>
               <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
                 Restore Your Natural <br />
@@ -192,13 +217,34 @@ export default function HomePage() {
               className="relative"
             >
               <div className="relative mx-auto w-full max-w-md aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-neutral-800 bg-neutral-900">
-                <img
-                  src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80"
-                  alt="Traditional Ayurvedic Herbal Oil Therapy"
-                  className="h-full w-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
+                {/* Sliding image carousel */}
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={heroSlide}
+                    src={heroImages[heroSlide].src}
+                    alt={heroImages[heroSlide].alt}
+                    className="absolute inset-0 h-full w-full object-cover"
+                    referrerPolicy="no-referrer"
+                    initial={{ opacity: 0, scale: 0.96, x: 40 }}
+                    animate={{ opacity: 1, scale: 1, x: 0 }}
+                    exit={{ opacity: 0, scale: 0.96, x: -40 }}
+                    transition={{ duration: 0.85, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  />
+                </AnimatePresence>
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent" />
+
+                {/* Slide indicator dots */}
+                <div className="absolute top-4 right-4 flex gap-1.5 z-10">
+                  {heroImages.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setHeroSlide(i)}
+                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                        i === heroSlide ? 'w-5 bg-white' : 'w-1.5 bg-white/40'
+                      }`}
+                    />
+                  ))}
+                </div>
 
                 {/* Floating Certificate Badge */}
                 <div className="absolute bottom-6 left-6 right-6 backdrop-blur-md bg-neutral-950/90 rounded-2xl p-4 shadow-lg border border-white/10">
@@ -211,7 +257,7 @@ export default function HomePage() {
                         NABH Accredited Hospital
                       </span>
                       <p className="text-[11px] text-neutral-300 font-medium">
-                        Highest Standard of Hygiene & Authentic Clinical Protocols
+                        Highest Standard of Hygiene &amp; Authentic Clinical Protocols
                       </p>
                     </div>
                   </div>

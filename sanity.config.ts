@@ -6,6 +6,7 @@
 
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
+import {media} from 'sanity-plugin-media'
 
 import {dataset, projectId} from './sanity/env'
 import {schema} from './sanity/schemaTypes'
@@ -18,5 +19,6 @@ export default defineConfig({
   schema,
   plugins: [
     structureTool({structure}),
+    media(),
   ],
 })

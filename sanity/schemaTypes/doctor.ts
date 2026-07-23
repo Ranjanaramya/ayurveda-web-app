@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity';
+import { DoctorImageInput } from '../components/DoctorImageInput';
 
 export const doctor = defineType({
   name: 'doctor',
@@ -33,6 +34,12 @@ export const doctor = defineType({
       type: 'image',
       options: {
         hotspot: true,
+        storeOriginalFilename: true,
+        metadata: ['blurhash', 'lqip', 'palette', 'exif', 'location'],
+        accept: 'image/*',
+      },
+      components: {
+        input: DoctorImageInput,
       },
     }),
     defineField({
