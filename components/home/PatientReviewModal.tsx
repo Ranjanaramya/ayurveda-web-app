@@ -149,7 +149,7 @@ export function PatientReviewModal({ isOpen, onClose, onSuccess }: PatientReview
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. Kochi, Kerala"
+                      placeholder="e.g. Colombo, Sri Lanka"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                       className="w-full rounded-xl bg-neutral-100 dark:bg-neutral-900 border-none px-3.5 py-2.5 text-xs font-semibold focus:ring-2 focus:ring-mint-500 text-neutral-800 dark:text-neutral-200"

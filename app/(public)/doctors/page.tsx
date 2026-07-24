@@ -64,7 +64,7 @@ export default function DoctorsPage() {
           Certified Ayurveda Physicians &amp; Specialists
         </h1>
         <p className="text-neutral-600 dark:text-neutral-350 text-sm max-w-2xl mx-auto leading-relaxed">
-          Our senior panel consists of highly trained BAMS and MD scholars from traditional Kerala lineage
+          Our senior panel consists of highly trained BAMS and MD scholars from traditional Sri Lankan and Ashtavaidya lineage
           colleges, offering patient-centric healing and deep clinical empathy.
         </p>
       </motion.div>

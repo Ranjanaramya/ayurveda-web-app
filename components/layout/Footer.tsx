@@ -46,7 +46,7 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-sm text-neutral-200/90 leading-relaxed drop-shadow-xs">
-              Blending ancient Kerala Ayurveda wisdom with modern clinical excellence. Fully certified
+              Blending ancient Sri Lankan Ayurveda & Deshiya Cikitsa wisdom with modern clinical excellence. Fully certified
               treatment programs for holistic healing and life-long vitality.
             </p>
             <div className="rounded-2xl bg-neutral-950/60 p-4 border border-mint-500/30 backdrop-blur-md hover:border-mint-400/50 hover:bg-neutral-950/80 transition-all duration-300 shadow-md">
