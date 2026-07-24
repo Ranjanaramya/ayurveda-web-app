@@ -17,6 +17,7 @@ import {
   MessageSquarePlus,
   UserCheck,
   Loader2,
+  Quote,
 } from 'lucide-react';
 import { getFAQs } from '../../lib/mockSanity';
 import { fetchApprovedReviews } from '../../services/reviewService';
@@ -32,6 +33,8 @@ import { urlFor } from '@/sanity/lib/sanity';
 export default function HomePage() {
   const { dataVersion } = useCms();
   const [activeFaq, setActiveFaq] = useState<string | null>(null);
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
+  const [showAllReviews, setShowAllReviews] = useState(false);
   const [galleryFilter, setGalleryFilter] = useState<
     'All' | 'Hospital' | 'Treatments' | 'Herbal Garden' | 'Yoga & Meditation'
   >('All');
@@ -62,6 +65,7 @@ export default function HomePage() {
 
  
   const visibleFaqs = showAllFaqs ? faqs : faqs.slice(0, 4);
+  const visibleReviews = showAllReviews ? testimonials : testimonials.slice(0, 3);
 
   const [heroSlide, setHeroSlide] = useState(0);
   const heroImages = [
@@ -166,21 +170,25 @@ export default function HomePage() {
       icon: <Activity className="h-6 w-6 text-mint-600 dark:text-mint-400" />,
       title: 'Spine & Joint Rehabilitation',
       desc: 'Non-invasive therapies using Kati Vasti, Kizhi, and traditional Marma techniques to treat sciatica, degenerative disks, and arthritic conditions.',
+      image: 'https://images.unsplash.com/photo-1519824145371-296894a0daa9?auto=format&fit=crop&w=600&q=80',
     },
     {
       icon: <CheckCircle className="h-6 w-6 text-mint-600 dark:text-mint-400" />,
       title: 'Authentic Panchakarma Detox',
       desc: 'Complete 5-fold systemic cleansing customized to restore optimal metabolic rate (Agni) and eliminate cellular toxins (Ama).',
+      image: 'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=600&q=80',
     },
     {
       icon: <Sprout className="h-6 w-6 text-mint-600 dark:text-mint-400" />,
       title: 'Stress & Burnout Management',
       desc: 'Nourishing Shirodhara and herbal Abhyanga treatments aimed at calming the central nervous system and restoring emotional stability.',
+      image: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=600&q=80',
     },
     {
       icon: <Heart className="h-6 w-6 text-mint-600 dark:text-mint-400" />,
       title: 'Chronic Lifestyle Care',
       desc: 'Comprehensive dietary planning and proprietary herbal protocols to successfully manage diabetes, obesity, and gastrointestinal disorders.',
+      image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80',
     },
   ];
 
@@ -194,8 +202,11 @@ export default function HomePage() {
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <motion.img
             src="https://img.magnific.com/premium-photo/table-with-bowls-ayurvedic-spices_6751-66.jpg"
-            alt="Kerala Rainforest Ayurveda Wellness Retreat"
+            alt="Sri Lanka Rainforest Ayurveda Wellness Retreat"
             decoding="async"
+            loading="eager"
+            width={1200}
+            height={800}
             className="h-full w-full object-cover"
             animate={{ scale: [1, 1.06, 1] }}
             transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
@@ -275,25 +286,17 @@ export default function HomePage() {
             >
               <div className="relative mx-auto w-full max-w-md aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-neutral-800 bg-neutral-900">
                 <img
-                  src="https://img.magnific.com/premium-photo/table-with-bowl-herbs-flowers-it_1281193-695.jpg?semt=ais_hybrid&w=740&q=80"
+                  src="https://img.magnific.com/premium-photo/table-with-bowl-herbs-flowers-it_1281193-695.jpg?semt=ais_hybrid&w=500&q=70"
                   alt="Traditional Ayurvedic Herbal Oil Therapy"
+                  loading="lazy"
+                  decoding="async"
+                  width={440}
+                  height={550}
                   className="w-110 h-150 mx-auto object-cover rounded-2xl"
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent" />
 
-                {/* Slide indicator dots */}
-                <div className="absolute top-4 right-4 flex gap-1.5 z-10">
-                  {heroImages.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setHeroSlide(i)}
-                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                        i === heroSlide ? 'w-5 bg-white' : 'w-1.5 bg-white/40'
-                      }`}
-                    />
-                  ))}
-                </div>
 
                 {/* Floating Certificate Badge */}
                 <div className="absolute bottom-6 left-6 right-6 backdrop-blur-md bg-neutral-950/90 rounded-2xl p-4 shadow-lg border border-white/10">
@@ -329,8 +332,12 @@ export default function HomePage() {
           >
             <div className="space-y-4">
               <img
-                src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=400&q=80"
+                src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=350&q=65&fm=webp"
                 alt="Ayurveda Herbs preparation"
+                loading="lazy"
+                decoding="async"
+                width={350}
+                height={350}
                 className="rounded-2xl w-full aspect-square object-cover shadow-md"
                 referrerPolicy="no-referrer"
               />
@@ -351,8 +358,12 @@ export default function HomePage() {
                 </p>
               </div>
               <img
-                src="https://images.unsplash.com/photo-1515150144380-bca9f1650ed9?auto=format&fit=crop&w=400&q=80"
+                src="https://images.unsplash.com/photo-1515150144380-bca9f1650ed9?auto=format&fit=crop&w=350&q=65&fm=webp"
                 alt="Herbal greenhouse"
+                loading="lazy"
+                decoding="async"
+                width={350}
+                height={350}
                 className="rounded-2xl w-full aspect-square object-cover shadow-md"
                 referrerPolicy="no-referrer"
               />
@@ -404,10 +415,10 @@ export default function HomePage() {
                 <Award className="h-10 w-10 text-mint-600 shrink-0" />
                 <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-normal">
                   <strong className="text-neutral-900 dark:text-white">
-                    Kerala Govt. Ayurveda Department Approved:
+                    Department of Ayurveda, Sri Lanka Approved:
                   </strong>{' '}
-                  Recommended category A clinical establishment representing the finest standards of
-                  purification and patient recovery.
+                  Recommended Grade-A clinical establishment representing the finest standards of traditional
+                  Deshiya Cikitsa and authentic Ayurvedic purification and patient recovery.
                 </p>
               </div>
             </div>
@@ -435,23 +446,59 @@ export default function HomePage() {
       </p>
     </div>
 
-    {/* Specializations Cards Grid - Glass Effect Applied */}
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {specializations.map((spec, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-40px' }}
-          transition={{ duration: 0.5, delay: i * 0.08, ease: 'easeOut' }}
-          /* 
-            👇 Glassmorphism & Modern Dark Mode Styling
-          */
-          className="group relative rounded-2xl bg-mint-100/70 dark:bg-neutral-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-white/10 p-6 shadow-sm hover:shadow-xl dark:hover:border-mint-500/30 transition-all duration-300 hover:translate-y-[-2px]"
-        >
-          {/* Icon Wrapper */}
-          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-mint-50 dark:bg-neutral-800/80 text-mint-700 dark:text-mint-400 border dark:border-white/10 group-hover:bg-mint-100 dark:group-hover:bg-neutral-800 transition-colors">
-            {spec.icon}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {specializations.map((spec, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.5, delay: i * 0.08, ease: 'easeOut' }}
+                className="perspective-1000 w-full h-[320px] group cursor-pointer"
+              >
+                <div className="relative w-full h-full duration-700 transform-style-3d group-hover:[transform:rotateY(180deg)] transition-all">
+                  {/* Front Face: Image & Title */}
+                  <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden shadow-md border border-neutral-200/60 dark:border-neutral-800 bg-neutral-900">
+                    <img
+                      src={spec.image}
+                      alt={spec.title}
+                      loading="lazy"
+                      decoding="async"
+                      width={480}
+                      height={320}
+                      className="w-full h-full object-cover brightness-95 group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/90 via-neutral-950/20 to-transparent flex flex-col justify-end p-6">
+                      <h3 className="font-serif text-lg font-semibold text-white leading-snug drop-shadow">
+                        {spec.title}
+                      </h3>
+                    </div>
+                  </div>
+
+                  {/* Back Face: Original Content */}
+                  <div className="absolute inset-0 w-full h-full backface-hidden [transform:rotateY(180deg)] rounded-2xl bg-mint-100 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800 p-6 flex flex-col justify-between shadow-md">
+                    <div>
+                      <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-mint-50 dark:bg-mint-900/30">
+                        {spec.icon}
+                      </div>
+                      <h3 className="font-serif text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                        {spec.title}
+                      </h3>
+                      <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                        {spec.desc}
+                      </p>
+                    </div>
+
+                    <div className="pt-4 border-t border-neutral-200/50 dark:border-neutral-800 flex items-center justify-between">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-mint-600 dark:text-mint-400">
+                        Ayurvedic Division
+                      </span>
+                      <div className="h-2 w-2 rounded-full bg-mint-500 animate-pulse" />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
 
           {/* Content */}
@@ -548,44 +595,12 @@ export default function HomePage() {
                   </p>
                 )}
               </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+            )}
+          </div>
+        )}
+      </section>
 
-      {filteredGallery.length === 0 && (
-        <p className="text-center text-neutral-500 dark:text-neutral-400 py-8 text-sm">
-          Loading..
-        </p>
-      )}
-
-      {/* Dynamic Load More / Show Less Button */}
-      {filteredGallery.length > INITIAL_GALLERY_LIMIT && (
-        <div className="flex justify-center pt-4">
-          {visibleCount < filteredGallery.length ? (
-            <button
-              onClick={() => setVisibleCount(filteredGallery.length)}
-              className="inline-flex items-center justify-center rounded-xl bg-mint-600 hover:bg-mint-700 dark:bg-neutral-800/90 dark:hover:bg-mint-500 dark:border dark:border-white/10 text-white px-6 py-3 text-xs font-semibold uppercase tracking-wider shadow-md transition-all hover:translate-y-[-2px] cursor-pointer"
-            >
-              Load More
-              <ChevronDown className="ml-2 h-4 w-4" />
-            </button>
-          ) : (
-            <button
-              onClick={() => setVisibleCount(INITIAL_GALLERY_LIMIT)}
-              className="inline-flex items-center justify-center rounded-xl bg-neutral-800 hover:bg-neutral-700 dark:bg-neutral-800/90 dark:hover:bg-neutral-700 dark:border dark:border-white/10 text-white px-6 py-3 text-xs font-semibold uppercase tracking-wider shadow-md transition-all hover:translate-y-[-2px] cursor-pointer"
-            >
-              Show Less
-              <ChevronDown className="ml-2 h-4 w-4 rotate-180" />
-            </button>
-          )}
-        </div>
-      )}
-    </div>
-  )}
-</section>
       {/* 5. TESTIMONIALS & PATIENT REVIEW SUBMISSION */}
-     {/* 5. TESTIMONIALS & PATIENT REVIEW SUBMISSION */}
       <section
   id="testimonials-section"
   className="bg-mint-105/50 dark:bg-neutral-900/30 py-20 border-y border-neutral-200 dark:border-white/10 backdrop-blur-md"
@@ -629,93 +644,113 @@ export default function HomePage() {
               */
               className="rounded-2xl bg-mint-50/80 dark:bg-neutral-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-white/10 p-6 shadow-sm hover:shadow-xl dark:hover:border-mint-500/30 transition-all duration-300 flex flex-col justify-between space-y-6"
             >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex text-amber-400">
-                    {[...Array(t.rating || 5)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-current" />
-                    ))}
-                  </div>
-                  {t.patientId && (
-                    <span className="inline-flex items-center text-[10px] font-mono font-bold bg-mint-100/80 dark:bg-mint-900/40 text-mint-800 dark:text-mint-300 px-2 py-0.5 rounded border border-mint-200 dark:border-mint-500/20 backdrop-blur-sm">
-                      <UserCheck className="h-3 w-3 mr-1 text-mint-600 dark:text-mint-400" />
-                      {t.patientId}
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-neutral-700 dark:text-neutral-200 italic leading-relaxed">
-                  "{t.text}"
-                </p>
-              </div>
+              <MessageSquarePlus className="h-4 w-4 mr-2" />
+              Write Patient Review
+            </button>
+          </div>
 
-              <div className="flex items-center space-x-3.5 pt-4 border-t border-neutral-200/50 dark:border-white/10">
-                <img
-                  src={
-                    t.avatar ||
-                    `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(t.name)}`
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <AnimatePresence initial={false}>
+              {visibleReviews && visibleReviews.length > 0 ? (
+                visibleReviews.map((t, index) => (
+                  <motion.div
+                    key={t.id || index}
+                    initial={{ opacity: 0, y: 25, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 25, scale: 0.96 }}
+                    transition={{ duration: 0.4, delay: index * 0.05, ease: 'easeOut' }}
+                    className="group relative rounded-2xl bg-mint-50 dark:bg-neutral-950 p-6 border border-neutral-200/60 dark:border-neutral-800 shadow-sm flex flex-col justify-between space-y-6 hover:shadow-md transition-all duration-300"
+                  >
+                    {/* Top Corner Slide Quote Icon */}
+                    <div className="absolute top-4 right-4 flex items-center space-x-1 text-mint-400/40 dark:text-mint-600/30 group-hover:text-mint-600 dark:group-hover:text-mint-400 transition-colors">
+                      <Quote className="h-5 w-5 group-hover:scale-110 transition-transform duration-300 transform -rotate-12" />
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between pr-8">
+                        <div className="flex text-amber-400">
+                          {[...Array(t.rating || 5)].map((_, i) => (
+                            <Star key={i} className="h-4 w-4 fill-current" />
+                          ))}
+                        </div>
+                        {t.patientId && (
+                          <span className="inline-flex items-center text-[10px] font-mono font-bold bg-mint-100 dark:bg-mint-950 text-mint-800 dark:text-mint-300 px-2 py-0.5 rounded border border-mint-200 dark:border-mint-900/40">
+                            <UserCheck className="h-3 w-3 mr-1 text-mint-600" />
+                            {t.patientId}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-neutral-700 dark:text-neutral-300 italic leading-relaxed">
+                        "{t.text}"
+                      </p>
+                    </div>
+
+                    <div className="flex items-center space-x-3.5 pt-4 border-t border-neutral-100 dark:border-neutral-800">
+                      <img
+                        src={
+                          t.avatar ||
+                          `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(t.name)}`
+                        }
+                        alt={t.name}
+                        loading="lazy"
+                        decoding="async"
+                        width={40}
+                        height={40}
+                        className="h-10 w-10 rounded-full object-cover shrink-0 bg-neutral-100"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div>
+                        <span className="block text-xs font-bold text-neutral-900 dark:text-white">
+                          {t.name}
+                        </span>
+                        {t.location && (
+                          <span className="block text-[10px] text-neutral-400">{t.location}</span>
+                        )}
+                        {t.treatmentReceived && (
+                          <span className="inline-block mt-1 text-[10px] font-medium bg-mint-50 dark:bg-mint-900/30 text-mint-700 dark:text-mint-300 px-2 py-0.5 rounded-full">
+                            Tx: {t.treatmentReceived}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="col-span-3 text-center py-8 text-neutral-500 dark:text-neutral-400 text-sm">
+                  No approved patient reviews yet.
+                </div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* View All / Show Less Button */}
+          {testimonials.length > 3 && (
+            <div className="flex justify-center pt-2">
+              <button
+                onClick={() => {
+                  setShowAllReviews((prev) => !prev);
+                  if (showAllReviews) {
+                    document.getElementById('testimonials-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }
-                  alt={t.name}
-                  className="h-10 w-10 rounded-full object-cover shrink-0 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-white/10"
-                  referrerPolicy="no-referrer"
-                />
-                <div>
-                  <span className="block text-xs font-bold text-neutral-900 dark:text-white">
-                    {t.name}
-                  </span>
-                  {t.location && (
-                    <span className="block text-[10px] text-neutral-500 dark:text-neutral-400">{t.location}</span>
-                  )}
-                  {t.treatmentReceived && (
-                    <span className="inline-block mt-1 text-[10px] font-medium bg-mint-100/70 dark:bg-mint-900/30 text-mint-700 dark:text-mint-300 px-2 py-0.5 rounded-full border dark:border-mint-500/20">
-                      Tx: {t.treatmentReceived}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-    ) : (
-      <div className="text-center py-8 text-neutral-500 dark:text-neutral-400 text-sm">
-        No approved patient reviews yet.
-      </div>
-    )}
-
-    {/* View All / Show Less Button */}
-   {/* View All / Show Less Button */}
-{testimonials && testimonials.length > INITIAL_TESTIMONIALS_LIMIT && (
-  <div className="flex justify-center pt-4">
-    <button
-      onClick={() => {
-        setShowAllTestimonials((prev) => !prev);
-        if (showAllTestimonials) {
-          document.getElementById('testimonials-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }}
-      /* 
-        👇 Gallery section button styling 적용 
-        (bg-mint-600 hover:bg-mint-700 dark:bg-neutral-800 dark:hover:bg-mint-500)
-      */
-      className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-mint-600 hover:bg-mint-700 dark:bg-neutral-800/90 dark:hover:bg-mint-500 dark:hover:border-mint-500/50 dark:border dark:border-white/10 text-white text-xs font-bold uppercase tracking-wider shadow-md transition-all cursor-pointer hover:translate-y-[-2px]"
-    >
-      {showAllTestimonials ? (
-        <>
-          <ChevronDown className="h-4 w-4 rotate-180 transition-transform" />
-          Show Less
-        </>
-      ) : (
-        <>
-          <ChevronDown className="h-4 w-4 transition-transform" />
-          View All 
-        </>
-      )}
-    </button>
-  </div>
-
-    )}
-  </div>
-</section>
+                }}
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-[#134E39] hover:bg-[#0E3D2C] text-white text-xs font-bold uppercase tracking-wider shadow-md transition-all cursor-pointer hover:scale-105"
+              >
+                {showAllReviews ? (
+                  <>
+                    <ChevronDown className="h-4 w-4 rotate-180 transition-transform duration-300" />
+                    Show Less
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-4 w-4 transition-transform duration-300" />
+                    View All
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Patient Review Modal */}
       <PatientReviewModal
@@ -725,49 +760,25 @@ export default function HomePage() {
       />
 
       {/* 6. FAQ SECTION */}
-      {/* 6. FAQ SECTION */}
-     <section id="faq-section" className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-10">
-  <div className="text-center space-y-3">
-    <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
-      Got Questions?
-    </span>
-    <h2 className="font-serif text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">
-      Frequently Asked Questions
-    </h2>
-    <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-      Learn more about ancient Indian medical systems, our in-house medicine purity, and how treatments work.
-    </p>
-  </div>
+      <section id="faq-section" className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-10">
+        <div className="text-center space-y-3">
+          <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
+            Got Questions?
+          </span>
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-neutral-600 dark:text-neutral-400 text-sm">
+            Learn more about ancient Indian medical systems, our in-house medicine purity, and how treatments
+            work.
+          </p>
+        </div>
 
-  <div className="space-y-4">
-    <AnimatePresence initial={false}>
-      {visibleFaqs.map((faq) => {
-        const isOpen = activeFaq === faq.id;
-        return (
-          <motion.div
-            key={faq.id}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.35 }}
-            /* 
-              👇 Glassmorphism Styling Added 
-            */
-            className="rounded-2xl border border-neutral-200/60 dark:border-white/10 bg-mint-100/70 dark:bg-neutral-900/40 backdrop-blur-xl overflow-hidden shadow-sm transition-all duration-300 dark:hover:border-mint-500/30"
-          >
-            <button
-              onClick={() => setActiveFaq(isOpen ? null : faq.id)}
-              className="w-full flex items-center justify-between p-5 text-left font-medium text-neutral-900 dark:text-white hover:bg-mint-200/40 dark:hover:bg-neutral-800/40 transition-colors focus:outline-none cursor-pointer"
-            >
-              <span className="font-serif text-base sm:text-lg">{faq.question}</span>
-              <ChevronDown
-                className={`h-5 w-5 text-neutral-400 dark:text-neutral-300 shrink-0 transition-transform duration-200 ${
-                  isOpen ? 'rotate-180 text-mint-600 dark:text-mint-400' : ''
-                }`}
-              />
-            </button>
-            <AnimatePresence initial={false}>
-              {isOpen && (
+        <div className="space-y-4">
+          <AnimatePresence initial={false}>
+            {visibleFaqs.map((faq) => {
+              const isOpen = activeFaq === faq.id;
+              return (
                 <motion.div
                   initial={{ height: 0 }}
                   animate={{ height: 'auto' }}

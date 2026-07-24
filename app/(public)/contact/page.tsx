@@ -169,8 +169,8 @@ export default function ContactPage() {
             <h2 className="font-serif text-2xl font-bold text-[#1B4D3E] dark:text-white">
               AyurVeda Care Hospital
             </h2>
-            <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
-              Our campus is located in a quiet, pollution-free sector of Kerala, featuring organic herbal
+            <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+              Our campus is located in a quiet, pollution-free sector of Sri Lanka, featuring organic herbal
               gardens, outdoor meditation decks, and pristine climate-controlled clinical suites.
             </p>
 

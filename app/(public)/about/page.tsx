@@ -15,7 +15,7 @@ export default function AboutPage() {
           About AyurVeda Care Hospital
         </h1>
         <p className="text-neutral-600 dark:text-neutral-350 text-sm max-w-2xl mx-auto leading-relaxed">
-          Established in Kerala, we integrate centuries of authentic clinical lineage with rigid modern
+          Established in Sri Lanka, we integrate centuries of authentic clinical lineage with rigid modern
           safety and hygiene standards.
         </p>
       </div>
@@ -78,7 +78,7 @@ export default function AboutPage() {
               'National Quality Assurance Standards (NQAS)',
               '100% Organic ISO-Certified Raw Material Sourcing',
               'Fully Accredited Panchakarma Therapy Suites',
-              'Traditional Ashtavaidya Clinical Heritage Lineage',
+              'Traditional Sri Lankan & Ashtavaidya Clinical Heritage Lineage',
               'Registered Pharmacy under GMP Guidelines',
               'Multi-Disciplinary Team of Senior BAMS/MD Doctors',
             ].map((cert, index) => (
@@ -96,10 +96,10 @@ export default function AboutPage() {
               <Award className="h-10 w-10 text-mint-600 shrink-0" />
               <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-normal">
                 <strong className="text-neutral-900 dark:text-white">
-                  Kerala Govt. Ayurveda Department Approved:
+                  Department of Ayurveda, Sri Lanka Approved:
                 </strong>{' '}
-                Recommended category A clinical establishment representing the finest standards of
-                purification and patient recovery.
+                Recommended Grade-A clinical establishment representing the finest standards of traditional
+                Deshiya Cikitsa and authentic Ayurvedic purification and patient recovery.
               </p>
             </div>
           </div>
