@@ -128,13 +128,13 @@ export default function ContactPage() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-16">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3">
-        <span className="text-[11px] font-bold text-[#1B4D3E] dark:text-emerald-400 uppercase tracking-[0.2em] block">
-          GET IN TOUCH & CONSULTATIONS
+        <span className="text-[11px] font-bold text-mint-600 dark:text-mint-400 uppercase tracking-[0.2em] block">
+          GET IN TOUCH &amp; CONSULTATIONS
         </span>
-        <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#1B4D3E] dark:text-emerald-300">
+        <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white">
           Contact AyurVeda Care Hospital
         </h1>
-        <p className="text-neutral-600 dark:text-neutral-400 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
+        <p className="text-neutral-600 dark:text-neutral-300 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
           Reach out to our clinical administration via WhatsApp, Phone, or Direct Messaging. We are available
           to assist your recovery journey.
         </p>
@@ -144,9 +144,9 @@ export default function ContactPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Emergency Assistance & Hospital Info */}
         <div className="lg:col-span-5 space-y-6">
-          {/* Emergency Assistance Notice */}
-          <div className="p-6 rounded-2xl bg-[#FAF6EE] dark:bg-amber-950/30 border border-[#EFE6D5] dark:border-amber-900/40 flex items-start space-x-4 shadow-sm">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E8D9C0] dark:bg-amber-900/60 text-[#A07038] dark:text-amber-400 mt-0.5">
+          {/* Emergency Assistance Notice - Glass Styled */}
+          <div className="p-6 rounded-2xl bg-[#FAF6EE] dark:bg-amber-950/20 backdrop-blur-xl border border-[#EFE6D5] dark:border-amber-500/20 flex items-start space-x-4 shadow-sm">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E8D9C0] dark:bg-amber-900/40 text-[#A07038] dark:text-amber-400 mt-0.5 border dark:border-amber-500/30">
               <ShieldAlert className="h-5 w-5 animate-pulse" />
             </div>
             <div className="text-xs space-y-1">
@@ -156,7 +156,7 @@ export default function ContactPage() {
               <p className="text-[#75644C] dark:text-amber-200/80 leading-relaxed text-xs">
                 If you are suffering from acute orthopedic dislocations or severe neural spinal pain, please
                 call our 24/7 dispatch directly at{' '}
-                <strong className="text-[#3B2E1E] dark:text-white font-bold">
+                <strong className="text-[#3B2E1E] dark:text-amber-300 font-bold">
                   {CLINIC_INFO.emergencyPhone}
                 </strong>{' '}
                 for rapid admissions.
@@ -164,9 +164,9 @@ export default function ContactPage() {
             </div>
           </div>
 
-          {/* Hospital Info Card */}
-          <div className="rounded-3xl bg-[#FDFBF7] dark:bg-neutral-900/60 border border-[#F0EBE1] dark:border-neutral-800 p-8 space-y-8 shadow-sm">
-            <h2 className="font-serif text-2xl font-bold text-[#1B4D3E] dark:text-emerald-300">
+          {/* Hospital Info Card - Glass Styled */}
+          <div className="rounded-3xl bg-[#FDFBF7] dark:bg-neutral-900/40 backdrop-blur-xl border border-[#F0EBE1] dark:border-white/10 p-8 space-y-8 shadow-sm">
+            <h2 className="font-serif text-2xl font-bold text-[#1B4D3E] dark:text-white">
               AyurVeda Care Hospital
             </h2>
             <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
@@ -177,22 +177,22 @@ export default function ContactPage() {
             <div className="space-y-6">
               {/* Hotlines */}
               <div className="flex items-start space-x-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-emerald-950/60 dark:text-emerald-400">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-neutral-800/80 dark:text-mint-400 dark:border dark:border-white/10">
                   <Phone className="h-5 w-5" />
                 </div>
                 <div>
-                  <span className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">
+                  <span className="block text-[11px] font-bold text-neutral-400 dark:text-neutral-400 uppercase tracking-wider mb-0.5">
                     CONSULTATION HOTLINES:
                   </span>
                   <a
                     href={`tel:${CLINIC_INFO.phone.replace(/[^0-9+]/g, '')}`}
-                    className="block text-sm font-bold text-neutral-900 dark:text-white hover:text-[#1B4D3E] transition-colors"
+                    className="block text-sm font-bold text-neutral-900 dark:text-white hover:text-mint-600 dark:hover:text-mint-400 transition-colors"
                   >
                     {CLINIC_INFO.phone}
                   </a>
                   <a
                     href={`tel:${CLINIC_INFO.phoneBackup.replace(/[^0-9+]/g, '')}`}
-                    className="block text-sm font-bold text-neutral-900 dark:text-white hover:text-[#1B4D3E] transition-colors"
+                    className="block text-sm font-bold text-neutral-900 dark:text-white hover:text-mint-600 dark:hover:text-mint-400 transition-colors"
                   >
                     {CLINIC_INFO.phoneBackup}
                   </a>
@@ -201,22 +201,22 @@ export default function ContactPage() {
 
               {/* Emails */}
               <div className="flex items-start space-x-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-emerald-950/60 dark:text-emerald-400">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-neutral-800/80 dark:text-mint-400 dark:border dark:border-white/10">
                   <Mail className="h-5 w-5" />
                 </div>
                 <div>
-                  <span className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">
+                  <span className="block text-[11px] font-bold text-neutral-400 dark:text-neutral-400 uppercase tracking-wider mb-0.5">
                     OFFICIAL INQUIRIES:
                   </span>
                   <a
                     href={`mailto:${CLINIC_INFO.email}`}
-                    className="block text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white hover:text-[#1B4D3E] transition-colors"
+                    className="block text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white hover:text-mint-600 dark:hover:text-mint-400 transition-colors"
                   >
                     {CLINIC_INFO.email}
                   </a>
                   <a
                     href={`mailto:${CLINIC_INFO.appointmentEmail}`}
-                    className="block text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white hover:text-[#1B4D3E] transition-colors"
+                    className="block text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white hover:text-mint-600 dark:hover:text-mint-400 transition-colors"
                   >
                     {CLINIC_INFO.appointmentEmail}
                   </a>
@@ -225,11 +225,11 @@ export default function ContactPage() {
 
               {/* Address */}
               <div className="flex items-start space-x-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-emerald-950/60 dark:text-emerald-400">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-neutral-800/80 dark:text-mint-400 dark:border dark:border-white/10">
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <span className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">
+                  <span className="block text-[11px] font-bold text-neutral-400 dark:text-neutral-400 uppercase tracking-wider mb-0.5">
                     CLINICAL LOCATION:
                   </span>
                   <p className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed font-medium">
@@ -240,12 +240,12 @@ export default function ContactPage() {
 
               {/* Hours */}
               <div className="flex items-start space-x-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-emerald-950/60 dark:text-emerald-400">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-neutral-800/80 dark:text-mint-400 dark:border dark:border-white/10">
                   <Clock className="h-5 w-5" />
                 </div>
                 <div>
-                  <span className="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">
-                    ADMISSIONS & CHECK-INS:
+                  <span className="block text-[11px] font-bold text-neutral-400 dark:text-neutral-400 uppercase tracking-wider mb-0.5">
+                    ADMISSIONS &amp; CHECK-INS:
                   </span>
                   <p className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 font-medium">
                     Open 24 Hours (Residential Treatments) <br />
@@ -257,14 +257,14 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* Right Column: General Inquiry Form Card */}
+        {/* Right Column: General Inquiry Form Card - Glass Styled */}
         <div className="lg:col-span-7">
-          <div className="rounded-3xl bg-[#DDEEE3] dark:bg-neutral-900/90 border border-[#C5DFC8] dark:border-neutral-800 p-8 sm:p-10 shadow-sm space-y-6">
+          <div className="rounded-3xl bg-[#DDEEE3] dark:bg-neutral-900/40 backdrop-blur-xl border border-[#C5DFC8] dark:border-white/10 p-8 sm:p-10 shadow-sm space-y-6">
             {!submitted ? (
               <form onSubmit={handleSubmit} noValidate className="space-y-6">
                 <div className="flex items-center space-x-2.5 pb-2">
-                  <FileText className="h-6 w-6 text-[#1B4D3E] dark:text-emerald-400" />
-                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1B4D3E] dark:text-emerald-300">
+                  <FileText className="h-6 w-6 text-[#1B4D3E] dark:text-mint-400" />
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1B4D3E] dark:text-white">
                     Submit General Inquiry
                   </h3>
                 </div>
@@ -272,7 +272,7 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Full Name */}
                   <div className="space-y-1.5">
-                    <label className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider">
+                    <label className="block text-[11px] font-bold text-[#2C5E4B] dark:text-neutral-300 uppercase tracking-wider">
                       FULL NAME <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -283,16 +283,16 @@ export default function ContactPage() {
                         setName(e.target.value);
                         if (errors.name) setErrors((prev) => ({ ...prev, name: '' }));
                       }}
-                      className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
-                        errors.name ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
-                      } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 shadow-sm`}
+                      className={`w-full rounded-xl bg-white dark:bg-neutral-950/60 backdrop-blur-md border ${
+                        errors.name ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-white/10'
+                      } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-mint-500 text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 shadow-sm transition-all`}
                     />
                     {errors.name && <p className="text-xs text-red-500 font-medium mt-1">{errors.name}</p>}
                   </div>
 
                   {/* Email Address */}
                   <div className="space-y-1.5">
-                    <label className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider">
+                    <label className="block text-[11px] font-bold text-[#2C5E4B] dark:text-neutral-300 uppercase tracking-wider">
                       EMAIL ADDRESS <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -305,9 +305,9 @@ export default function ContactPage() {
                         setEmail(e.target.value);
                         if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
                       }}
-                      className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
-                        errors.email ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
-                      } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 shadow-sm`}
+                      className={`w-full rounded-xl bg-white dark:bg-neutral-950/60 backdrop-blur-md border ${
+                        errors.email ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-white/10'
+                      } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-mint-500 text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 shadow-sm transition-all`}
                     />
                     <datalist id="contact-email-suggestions">
                       {email.includes('@') ? null : [
@@ -322,7 +322,7 @@ export default function ContactPage() {
 
                 {/* Phone Number / WhatsApp */}
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider">
+                  <label className="block text-[11px] font-bold text-[#2C5E4B] dark:text-neutral-300 uppercase tracking-wider">
                     PHONE NUMBER / WHATSAPP <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -341,16 +341,16 @@ export default function ContactPage() {
                       setPhone(e.target.value);
                       if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }));
                     }}
-                    className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
-                      errors.phone ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
-                    } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 shadow-sm`}
+                    className={`w-full rounded-xl bg-white dark:bg-neutral-950/60 backdrop-blur-md border ${
+                      errors.phone ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-white/10'
+                    } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-mint-500 text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 shadow-sm transition-all`}
                   />
                   {errors.phone && <p className="text-xs text-red-500 font-medium mt-1">{errors.phone}</p>}
                 </div>
 
                 {/* Message */}
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider">
+                  <label className="block text-[11px] font-bold text-[#2C5E4B] dark:text-neutral-300 uppercase tracking-wider">
                     MESSAGE <span className="text-red-500">*</span>
                   </label>
                   <textarea
@@ -361,17 +361,18 @@ export default function ContactPage() {
                       setMessage(e.target.value);
                       if (errors.message) setErrors((prev) => ({ ...prev, message: '' }));
                     }}
-                    className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
-                      errors.message ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
-                    } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 resize-none shadow-sm`}
+                    className={`w-full rounded-xl bg-white dark:bg-neutral-950/60 backdrop-blur-md border ${
+                      errors.message ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-white/10'
+                    } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-mint-500 text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 resize-none shadow-sm transition-all`}
                   />
                   {errors.message && <p className="text-xs text-red-500 font-medium mt-1">{errors.message}</p>}
                 </div>
 
+                {/* Send Button */}
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full inline-flex items-center justify-center rounded-xl bg-[#134E39] hover:bg-[#0E3D2C] text-white font-bold uppercase tracking-wider py-4 text-xs transition-colors shadow-md disabled:opacity-50 cursor-pointer"
+                  className="w-full inline-flex items-center justify-center rounded-xl bg-[#134E39] hover:bg-mint-600 dark:bg-neutral-800/90 dark:hover:bg-mint-500 dark:border dark:border-white/10 text-white font-bold uppercase tracking-wider py-4 text-xs transition-all duration-300 shadow-sm disabled:opacity-50 cursor-pointer"
                 >
                   {submitting ? (
                     <span className="flex items-center">
@@ -391,29 +392,29 @@ export default function ContactPage() {
               </form>
             ) : (
               <div className="text-center py-12 space-y-4">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400 border dark:border-emerald-500/30">
                   <CheckCircle className="h-8 w-8 animate-bounce" />
                 </div>
                 <h3 className="font-serif text-xl font-bold text-[#1B4D3E] dark:text-white">
                   Message Sent Successfully!
                 </h3>
-                <p className="text-xs text-neutral-600 dark:text-neutral-400 max-w-sm mx-auto">
+                <p className="text-xs text-neutral-600 dark:text-neutral-300 max-w-sm mx-auto">
                   Thank you for reaching out. Your message has been logged in Sanity and our administration office will respond within 24 hours.
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
-                  className="px-6 py-2.5 rounded-xl bg-[#134E39] text-white hover:bg-[#0E3D2C] text-xs font-bold uppercase tracking-wider cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl bg-[#134E39] hover:bg-mint-600 dark:bg-neutral-800/90 dark:hover:bg-mint-500 dark:border dark:border-white/10 text-white text-xs font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer"
                 >
                   Submit another message
                 </button>
               </div>
             )}
 
-            <div className="border-t border-[#C5DFC8]/60 dark:border-neutral-800 pt-6 text-center space-y-3">
-              <p className="text-xs text-[#3B6856] dark:text-neutral-400 font-medium">Looking to book a certified medical consultation?</p>
+            <div className="border-t border-[#C5DFC8]/60 dark:border-white/10 pt-6 text-center space-y-3">
+              <p className="text-xs text-[#3B6856] dark:text-neutral-300 font-medium">Looking to book a certified medical consultation?</p>
               <Link
                 href="/appointment"
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#134E39] hover:bg-[#0E3D2C] text-white dark:bg-emerald-600 dark:hover:bg-emerald-700 px-6 text-xs font-bold uppercase tracking-wider shadow-sm transition-all"
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#134E39] hover:bg-mint-600 dark:bg-neutral-800/90 dark:hover:bg-mint-500 dark:border dark:border-white/10 text-white px-6 text-xs font-bold uppercase tracking-wider shadow-sm transition-all duration-300"
               >
                 GO TO APPOINTMENT SCHEDULER
               </Link>
@@ -422,17 +423,16 @@ export default function ContactPage() {
         </div>
       </div>
 
-
-      {/* NEW SECTION: Clinical Services & Specialties Overview */}
-      <section className="pt-8 space-y-10 border-t border-neutral-200 dark:border-neutral-800">
+      {/* Services Section - Glass Styled Cards */}
+      <section className="pt-8 space-y-10 border-t border-neutral-200 dark:border-white/10">
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
             Our Offerings
           </span>
           <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white">
-            Hospital Services & Clinical Divisions
+            Hospital Services &amp; Clinical Divisions
           </h2>
-          <p className="text-neutral-600 dark:text-neutral-400 text-xs sm:text-sm">
+          <p className="text-neutral-600 dark:text-neutral-300 text-xs sm:text-sm">
             Discover our specialized treatment wings supervised by senior Ayurvedic scholars. Click any service
             to schedule a consultation directly.
           </p>
@@ -442,10 +442,17 @@ export default function ContactPage() {
           {services.map((svc) => (
             <div
               key={svc.id}
-              className="group rounded-2xl bg-mint-50/50 dark:bg-neutral-900/60 border border-neutral-200/60 dark:border-neutral-800 p-6 flex flex-col justify-between space-y-4 hover:shadow-md hover:border-mint-500/40 transition-all duration-300"
+              /* 
+                👇 Dark Mode Glass Effect Classes Added Here:
+                dark:bg-neutral-900/40 
+                backdrop-blur-xl 
+                dark:border-white/10 
+                dark:hover:border-mint-500/30
+              */
+              className="group rounded-2xl bg-mint-50/50 dark:bg-neutral-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-white/10 p-6 flex flex-col justify-between space-y-4 shadow-sm hover:shadow-xl dark:hover:border-mint-500/30 transition-all duration-300"
             >
               <div className="space-y-3">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-mint-50 dark:bg-mint-950/30 border border-mint-200/60 dark:border-mint-900/30 overflow-hidden">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-mint-50 dark:bg-neutral-800/80 border border-mint-200/60 dark:border-white/10 overflow-hidden shrink-0">
                   <Image
                     src={svc.img}
                     alt={svc.title}
@@ -457,16 +464,16 @@ export default function ContactPage() {
                 <h3 className="font-serif text-lg font-bold text-neutral-900 dark:text-white group-hover:text-mint-600 dark:group-hover:text-mint-400 transition-colors">
                   {svc.title}
                 </h3>
-                <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
                   {svc.desc}
                 </p>
               </div>
 
               <Link
                 href={`/appointment?treatmentId=${svc.id}`}
-                className="inline-flex items-center text-xs font-bold text-mint-700 dark:text-mint-400 hover:translate-x-1 transition-transform uppercase tracking-wider pt-2"
+                className="inline-flex items-center text-xs font-bold text-mint-700 dark:text-mint-400 group-hover:translate-x-1 transition-transform uppercase tracking-wider pt-2"
               >
-                Inquire & Schedule
+                Inquire &amp; Schedule
                 <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
               </Link>
             </div>
