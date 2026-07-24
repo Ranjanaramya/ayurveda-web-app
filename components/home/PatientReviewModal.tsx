@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { X, Star, CheckCircle, Sparkles, UserCheck, ShieldCheck } from 'lucide-react';
-import { submitPatientReview } from '../../services/reviewService';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Star, Sparkles, UserCheck, ShieldCheck } from 'lucide-react';
 
 interface PatientReviewModalProps {
   isOpen: boolean;
@@ -28,19 +27,29 @@ export function PatientReviewModal({ isOpen, onClose, onSuccess }: PatientReview
 
     setSubmitting(true);
     try {
-      await submitPatientReview({
-        patientId,
-        name,
-        location,
-        treatmentReceived,
-        rating,
-        text,
+      // Direct Next.js API Route fetch call (Writes to Sanity Dataset)
+      const res = await fetch('/api/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          patientId,
+          name,
+          location,
+          treatmentReceived,
+          rating,
+          text,
+        }),
       });
-      setSubmitting(false);
-      setSubmitted(true);
-      if (onSuccess) onSuccess();
+
+      if (res.ok) {
+        setSubmitting(false);
+        setSubmitted(true);
+        if (onSuccess) onSuccess();
+      } else {
+        throw new Error('Failed to post review');
+      }
     } catch (err) {
-      console.error(err);
+      console.error('Submission error:', err);
       setSubmitting(false);
       alert('Failed to submit review. Please try again.');
     }

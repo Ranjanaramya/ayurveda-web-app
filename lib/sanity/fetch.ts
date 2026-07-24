@@ -37,21 +37,39 @@ export async function fetchTreatments(): Promise<Treatment[]> {
   return client.fetch(treatmentsQuery);
 }
 
-export async function fetchBlogs(): Promise<Blog[]> {
-  if (isMock) {
-    return getBlogs();
-  }
-  return client.fetch(blogsQuery);
+export async function fetchBlogs() {
+  const query = `*[_type == "blog"] | order(publishedAt desc) {
+    "id": _id,
+    title,
+    excerpt,
+    content,
+    author,
+    publishedAt,
+    category,
+    readTime,
+    image,
+    tags
+  }`;
+
+  return await client.fetch(query);
 }
 
-export async function fetchBlogById(id: string): Promise<Blog | null> {
-  if (isMock) {
-    const blogs = getBlogs();
-    return blogs.find((b) => b.id === id) || null;
-  }
-  return client.fetch(blogByIdQuery, { id });
-}
+export async function fetchBlogById(id: string) {
+  const query = `*[_type == "blog" && _id == $id][0] {
+    "id": _id,
+    title,
+    excerpt,
+    content,
+    author,
+    publishedAt,
+    category,
+    readTime,
+    image,
+    tags
+  }`;
 
+  return await client.fetch(query, { id });
+}
 export async function fetchInquiries(): Promise<PatientInquiry[]> {
   if (isMock) {
     return getInquiries();
@@ -59,9 +77,20 @@ export async function fetchInquiries(): Promise<PatientInquiry[]> {
   return client.fetch(inquiriesQuery);
 }
 
-export async function fetchReviews(): Promise<Testimonial[]> {
-  if (isMock) {
-    return getTestimonials();
-  }
-  return client.fetch(APPROVED_REVIEWS_QUERY);
+export async function fetchReviews() {
+  // approved == true உள்ள தரவுகள் மட்டுமே ஃபில்டர் ஆகும்
+  const query = `*[_type == "review" && approved == true] | order(_createdAt desc){
+    "id": _id,
+    patientId,
+    name,
+    location,
+    treatmentReceived,
+    rating,
+    text,
+    avatar,
+    approved,
+    createdAt
+  }`;
+
+  return await client.fetch(query);
 }
