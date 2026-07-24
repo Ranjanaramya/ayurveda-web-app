@@ -63,7 +63,7 @@ export default function DoctorsPage() {
         <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white">
           Certified Ayurveda Physicians &amp; Specialists
         </h1>
-        <p className="text-neutral-600 dark:text-neutral-350 text-sm max-w-2xl mx-auto leading-relaxed">
+        <p className="text-neutral-600 dark:text-neutral-300 text-sm max-w-2xl mx-auto leading-relaxed">
           Our senior panel consists of highly trained BAMS and MD scholars from traditional Kerala lineage
           colleges, offering patient-centric healing and deep clinical empathy.
         </p>
@@ -97,11 +97,18 @@ export default function DoctorsPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.5, delay: (index % 3) * 0.12, ease: 'easeOut' }}
-                className="flex flex-col justify-between rounded-3xl overflow-hidden bg-mint-100 dark:bg-neutral-955 border border-neutral-200/60 dark:border-neutral-800 shadow-sm hover:shadow-md transition-shadow duration-300"
+                /* 
+                  👇 Dark Mode Glass Effect Classes Added Here:
+                  dark:bg-neutral-900/40 
+                  backdrop-blur-xl 
+                  dark:border-white/10 
+                  dark:hover:border-mint-500/30
+                */
+                className="flex flex-col justify-between rounded-3xl overflow-hidden bg-mint-100/80 dark:bg-neutral-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-white/10 shadow-sm hover:shadow-xl dark:hover:border-mint-500/30 transition-all duration-300"
               >
-                {/* Top Image — continuous zoom pulse + extra zoom on hover */}
+                {/* Top Image */}
                 <div>
-                  <div className="relative aspect-[4/3] bg-neutral-100 overflow-hidden">
+                  <div className="relative aspect-[4/3] bg-neutral-100 dark:bg-neutral-800/50 overflow-hidden">
                     <motion.img
                       src={doctor.image}
                       alt={doctor.name}
@@ -113,13 +120,13 @@ export default function DoctorsPage() {
                         scale: { duration: 6, repeat: Infinity, ease: 'easeInOut' },
                       }}
                     />
-                    {/* Overlay brightens slightly on hover */}
+                    {/* Overlay */}
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-t from-neutral-900/50 to-transparent"
+                      className="absolute inset-0 bg-gradient-to-t from-neutral-900/60 to-transparent"
                       whileHover={{ opacity: 0.6 }}
                       transition={{ duration: 0.35, ease: 'easeOut' }}
                     />
-                    <span className="absolute bottom-4 left-4 bg-mint-100/95 text-mint-800 dark:bg-mint-950/95 dark:text-mint-305 backdrop-blur px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                    <span className="absolute bottom-4 left-4 bg-mint-100/95 text-mint-800 dark:bg-neutral-950/70 dark:text-mint-400 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-transparent dark:border-white/10 shadow-sm">
                       Experience: {doctor.experience}
                     </span>
                   </div>
@@ -130,21 +137,21 @@ export default function DoctorsPage() {
                       <h2 className="font-serif text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">
                         {doctor.name}
                       </h2>
-                      <p className="text-xs font-bold text-mint-600 dark:text-mint-405 uppercase tracking-wider mt-1">
+                      <p className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-wider mt-1">
                         {doctor.role}
                       </p>
                     </div>
 
                     {/* Specialization Badges */}
                     <div className="space-y-1.5">
-                      <span className="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+                      <span className="block text-[10px] font-bold text-neutral-400 dark:text-neutral-400 uppercase tracking-widest">
                         Expertise:
                       </span>
                       <div className="flex flex-wrap gap-1.5">
                         {doctor.specialization.map((spec, sIdx) => (
                           <span
                             key={sIdx}
-                            className="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200/60 dark:border-neutral-800 text-[10px] font-semibold text-neutral-700 dark:text-neutral-300 px-2 py-0.5 rounded-md"
+                            className="bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200/60 dark:border-white/10 text-[10px] font-semibold text-neutral-700 dark:text-neutral-300 px-2 py-0.5 rounded-md backdrop-blur-sm"
                           >
                             {spec}
                           </span>
@@ -154,12 +161,12 @@ export default function DoctorsPage() {
 
                     {isExpanded ? (
                       <>
-                        <p className="text-xs sm:text-sm text-neutral-650 dark:text-neutral-400 leading-relaxed border-t border-neutral-100 dark:border-neutral-900 pt-3">
+                        <p className="text-xs sm:text-sm text-neutral-650 dark:text-neutral-300 leading-relaxed border-t border-neutral-100 dark:border-white/10 pt-3">
                           {doctor.bio}
                         </p>
 
                         {/* Board Certifications */}
-                        <div className="space-y-2 pt-2 border-t border-neutral-100 dark:border-neutral-900">
+                        <div className="space-y-2 pt-2 border-t border-neutral-100 dark:border-white/10">
                           <span className="flex items-center text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
                             <Award className="h-3.5 w-3.5 mr-1.5 text-amber-500" />
                             Board Certifications:
@@ -168,7 +175,7 @@ export default function DoctorsPage() {
                             {doctor.certifications.map((cert, cIdx) => (
                               <li
                                 key={cIdx}
-                                className="text-[11px] text-neutral-650 dark:text-neutral-400 flex items-start"
+                                className="text-[11px] text-neutral-650 dark:text-neutral-300 flex items-start"
                               >
                                 <span className="h-1 w-1 rounded-full bg-mint-500 mr-2 mt-1.5 shrink-0" />
                                 <span>{cert}</span>
@@ -180,7 +187,7 @@ export default function DoctorsPage() {
                         <div className="pt-1">
                           <button
                             onClick={() => toggleExpand(doctor.id)}
-                            className="inline-flex items-center text-xs font-bold text-mint-600 dark:text-mint-405 hover:underline cursor-pointer"
+                            className="inline-flex items-center text-xs font-bold text-mint-600 dark:text-mint-400 hover:underline cursor-pointer"
                           >
                             Back
                           </button>
@@ -190,7 +197,7 @@ export default function DoctorsPage() {
                       <div className="pt-1">
                         <button
                           onClick={() => toggleExpand(doctor.id)}
-                          className="inline-flex items-center text-xs font-bold text-mint-600 dark:text-mint-405 hover:underline cursor-pointer"
+                          className="inline-flex items-center text-xs font-bold text-mint-600 dark:text-mint-400 hover:underline cursor-pointer"
                         >
                           View More
                         </button>
@@ -198,23 +205,23 @@ export default function DoctorsPage() {
                     )}
                   </div>
 
-                  {/* Clinic Availability Schedule */}
+                  {/* Clinic Availability Schedule (Glass Styled) */}
                   <div className="px-6 sm:px-8 pt-3 pb-0">
-                    <div className="p-4 rounded-2xl bg-mint-50/50 dark:bg-mint-950/20 border border-mint-100/30 dark:border-mint-900/20">
-                      <span className="flex items-center text-xs font-bold text-neutral-850 dark:text-neutral-800 mb-2">
-                        <Calendar className="h-4 w-4 mr-1.5 text-mint-600 dark:text-mint-600" />
+                    <div className="p-4 rounded-2xl bg-mint-50/50 dark:bg-mint-950/30 border border-mint-100/30 dark:border-mint-800/30 backdrop-blur-sm">
+                      <span className="flex items-center text-xs font-bold text-neutral-850 dark:text-neutral-200 mb-2">
+                        <Calendar className="h-4 w-4 mr-1.5 text-mint-600 dark:text-mint-400" />
                         Clinic Availability Schedule
                       </span>
-                      <div className="space-y-1.5 text-xs text-neutral-600 dark:text-neutral-700 font-medium">
+                      <div className="space-y-1.5 text-xs text-neutral-600 dark:text-neutral-300 font-medium">
                         <div className="flex justify-between">
                           <span>Days:</span>
-                          <span className="text-neutral-900 dark:text-neutral-900 font-semibold">
+                          <span className="text-neutral-900 dark:text-white font-semibold">
                             {doctor.availability.days.join(', ')}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Timing:</span>
-                          <span className="text-neutral-900 dark:text-neutral-900 font-semibold">
+                          <span className="text-neutral-900 dark:text-white font-semibold">
                             {doctor.availability.timeSlot}
                           </span>
                         </div>
@@ -224,18 +231,21 @@ export default function DoctorsPage() {
                 </div>
 
                 {/* Bottom CTA Buttons */}
-                <div className="p-6 sm:p-8 pt-4">
+               <div className="p-6 sm:p-8 pt-4">
                   <div className="flex gap-2">
+                    {/* Mail Button */}
                     <a
                       href={`mailto:${doctor.contactEmail}`}
-                      className="flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-100 text-neutral-700 hover:bg-neutral-200 dark:bg-neutral-900 dark:text-neutral-350 dark:hover:bg-neutral-800 shrink-0 border border-transparent hover:border-neutral-200/50"
+                      className="flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-neutral-800/90 dark:hover:bg-neutral-700 dark:border dark:border-white/10 shrink-0 transition-all duration-300 shadow-sm cursor-pointer"
                       title="Send Direct Inquiry"
                     >
                       <Mail className="h-4.5 w-4.5" />
                     </a>
+
+                    {/* Book Appointment Button - Treatments Page Style */}
                     <button
                       onClick={() => handleConsult(doctor.id)}
-                      className="flex-1 inline-flex items-center justify-center rounded-xl bg-mint-600 hover:bg-mint-750 dark:bg-mint-500 dark:hover:bg-mint-400 text-white text-xs font-bold uppercase tracking-wider py-3 transition-colors shadow-sm cursor-pointer"
+                      className="flex-1 inline-flex items-center justify-center rounded-xl bg-neutral-900 text-white hover:bg-mint-600 dark:bg-neutral-800/90 dark:hover:bg-mint-500 dark:border dark:border-white/10 text-xs font-bold uppercase tracking-wider py-3 transition-all duration-300 shadow-sm cursor-pointer"
                     >
                       <UserCheck className="h-4 w-4 mr-1.5" />
                       Book Appointment

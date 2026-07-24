@@ -38,17 +38,36 @@ export default function HomePage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
+  const INITIAL_TESTIMONIALS_LIMIT = 3;
+  const [showAllTestimonials, setShowAllTestimonials] = useState<boolean>(false);
+
+ 
+  const visibleTestimonials = showAllTestimonials
+    ? testimonials
+    : testimonials.slice(0, INITIAL_TESTIMONIALS_LIMIT);
+
   // Dynamic Sanity States for Gallery & Treatments
   const [sanityGalleryItems, setSanityGalleryItems] = useState<any[]>([]);
   const [sanityTreatments, setSanityTreatments] = useState<any[]>([]);
   const [isGalleryLoading, setIsGalleryLoading] = useState(false);
 
-  // State for Load More / Show Less feature
+  
   const INITIAL_GALLERY_LIMIT = 8;
   const [visibleCount, setVisibleCount] = useState<number>(INITIAL_GALLERY_LIMIT);
 
+  
+  const [showAllFaqs, setShowAllFaqs] = useState<boolean>(false);
+
   const faqs = getFAQs();
+
+ 
   const visibleFaqs = showAllFaqs ? faqs : faqs.slice(0, 4);
+
+  const [heroSlide, setHeroSlide] = useState(0);
+  const heroImages = [
+    "https://img.magnific.com/premium-photo/table-with-bowls-ayurvedic-spices_6751-66.jpg",
+    "https://img.magnific.com/premium-photo/table-with-bowl-herbs-flowers-it_1281193-695.jpg?semt=ais_hybrid&w=740&q=80",
+  ];
 
   const getSlotClasses = (slot: number) => {
     const slots = [
@@ -397,253 +416,306 @@ export default function HomePage() {
       </section>
 
       {/* 3. CORE SPECIALIZATIONS */}
-      <section
-        id="specializations"
-        className="bg-neutral-50 dark:bg-neutral-900/50 py-20 border-y border-neutral-100 dark:border-neutral-800"
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
-              What We Excel In
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">
-              Our Core Healing Specializations
-            </h2>
-            <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-              Each specialized division utilizes customized medicines prepared in-house, ensuring immediate
-              symptom relief coupled with therapeutic system rejuvenation.
-            </p>
+     <section
+  id="specializations"
+  className="bg-neutral-50 dark:bg-neutral-900/30 py-20 border-y border-neutral-100 dark:border-white/10 backdrop-blur-md"
+>
+  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+    {/* Section Header */}
+    <div className="text-center max-w-2xl mx-auto space-y-3">
+      <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
+        What We Excel In
+      </span>
+      <h2 className="font-serif text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">
+        Our Core Healing Specializations
+      </h2>
+      <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+        Each specialized division utilizes customized medicines prepared in-house, ensuring immediate
+        symptom relief coupled with therapeutic system rejuvenation.
+      </p>
+    </div>
+
+    {/* Specializations Cards Grid - Glass Effect Applied */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {specializations.map((spec, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.5, delay: i * 0.08, ease: 'easeOut' }}
+          /* 
+            👇 Glassmorphism & Modern Dark Mode Styling
+          */
+          className="group relative rounded-2xl bg-mint-100/70 dark:bg-neutral-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-white/10 p-6 shadow-sm hover:shadow-xl dark:hover:border-mint-500/30 transition-all duration-300 hover:translate-y-[-2px]"
+        >
+          {/* Icon Wrapper */}
+          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-mint-50 dark:bg-neutral-800/80 text-mint-700 dark:text-mint-400 border dark:border-white/10 group-hover:bg-mint-100 dark:group-hover:bg-neutral-800 transition-colors">
+            {spec.icon}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {specializations.map((spec, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.5, delay: i * 0.08, ease: 'easeOut' }}
-                className="group relative rounded-2xl bg-mint-100 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800 p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-2px]"
-              >
-                <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-mint-50 dark:bg-mint-900/30 group-hover:bg-mint-100 dark:group-hover:bg-mint-900/50 transition-colors">
-                  {spec.icon}
-                </div>
-                <h3 className="font-serif text-lg font-semibold text-neutral-900 dark:text-white mb-2">
-                  {spec.title}
-                </h3>
-                <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                  {spec.desc}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+          {/* Content */}
+          <h3 className="font-serif text-lg font-semibold text-neutral-900 dark:text-white mb-2 group-hover:text-mint-600 dark:group-hover:text-mint-400 transition-colors">
+            {spec.title}
+          </h3>
+          <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
+            {spec.desc}
+          </p>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* 4. GALLERY (DYNAMIC SANITY INTEGRATED) */}
-      <section id="gallery-section" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="space-y-2">
-            <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
-              Visual Tour
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">
-              Our Healing Spaces & Garden
-            </h2>
-          </div>
+     <section id="gallery-section" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
+  <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div className="space-y-2">
+      <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
+        Visual Tour
+      </span>
+      <h2 className="font-serif text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">
+        Our Healing Spaces &amp; Garden
+      </h2>
+    </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-2">
-            {(['All', 'Hospital', 'Treatments', 'Herbal Garden', 'Yoga & Meditation'] as const).map(
-              (cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setGalleryFilter(cat)}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all focus:outline-none cursor-pointer ${
-                    galleryFilter === cat
-                      ? 'bg-mint-600 text-white dark:bg-mint-500'
-                      : 'bg-neutral-100 text-neutral-650 dark:bg-neutral-800 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-                  }`}
-                >
-                  {cat}
-                </button>
-              )
-            )}
-          </div>
-        </div>
+    {/* Filter Buttons with Glass Effect */}
+    <div className="flex flex-wrap gap-2">
+      {(['All', 'Hospital', 'Treatments', 'Herbal Garden', 'Yoga & Meditation'] as const).map(
+        (cat) => (
+          <button
+            key={cat}
+            onClick={() => setGalleryFilter(cat)}
+            className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all focus:outline-none cursor-pointer backdrop-blur-md ${
+              galleryFilter === cat
+                ? 'bg-mint-600 text-white dark:bg-mint-500 shadow-sm'
+                : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-900/50 dark:text-neutral-300 dark:border dark:border-white/10 hover:bg-neutral-200 dark:hover:bg-neutral-800/60'
+            }`}
+          >
+            {cat}
+          </button>
+        )
+      )}
+    </div>
+  </div>
 
-        {/* Grid with animation */}
-        {isGalleryLoading ? (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="h-6 w-6 animate-spin text-mint-600" />
-          </div>
-        ) : (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <AnimatePresence mode="popLayout">
-                {filteredGallery.slice(0, visibleCount).map((item) => (
-                  <motion.div
-                    layout
-                    key={item.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                    className="group rounded-2xl overflow-hidden bg-mint-100 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800 shadow-sm"
-                  >
-                    <div className="relative aspect-video overflow-hidden bg-neutral-200 dark:bg-neutral-800">
-                      <img
-                        src={getImageSrc(item.image)}
-                        alt={item.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        referrerPolicy="no-referrer"
-                      />
-                      <span className="absolute top-3 left-3 bg-mint-200/95 dark:bg-neutral-950/95 backdrop-blur px-2.5 py-1 rounded-md text-[10px] font-bold text-mint-700 dark:text-mint-400 uppercase tracking-wider shadow-sm">
-                        {item.category}
-                      </span>
-                    </div>
-                    <div className="p-4 space-y-1.5">
-                      <h3 className="font-serif text-sm font-semibold text-neutral-900 dark:text-white">
-                        {item.title}
-                      </h3>
-                      {item.description && (
-                        <p className="text-[11px] text-neutral-500 dark:text-neutral-400 line-clamp-2 leading-relaxed">
-                          {item.description}
-                        </p>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
+  {/* Grid with animation */}
+  {isGalleryLoading ? (
+    <div className="flex justify-center items-center py-12">
+      <Loader2 className="h-6 w-6 animate-spin text-mint-600 dark:text-mint-400" />
+    </div>
+  ) : (
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <AnimatePresence mode="popLayout">
+          {filteredGallery.slice(0, visibleCount).map((item) => (
+            <motion.div
+              layout
+              key={item.id}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+              /* 
+                👇 Glassmorphism & Hover Effects
+              */
+              className="group rounded-2xl overflow-hidden bg-mint-100/70 dark:bg-neutral-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-white/10 shadow-sm hover:shadow-xl dark:hover:border-mint-500/30 transition-all duration-300"
+            >
+              {/* Image Container */}
+              <div className="relative aspect-video overflow-hidden bg-neutral-200 dark:bg-neutral-800/80">
+                <img
+                  src={getImageSrc(item.image)}
+                  alt={item.title}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  referrerPolicy="no-referrer"
+                />
+                {/* Category Badge with Glass Effect */}
+                <span className="absolute top-3 left-3 bg-white/90 dark:bg-neutral-950/80 backdrop-blur-md px-2.5 py-1 rounded-md text-[10px] font-bold text-mint-700 dark:text-mint-400 uppercase tracking-wider border border-white/20 dark:border-white/10 shadow-sm">
+                  {item.category}
+                </span>
+              </div>
 
-            {filteredGallery.length === 0 && (
-              <p className="text-center text-neutral-500 py-8 text-sm">
-                Loading..
-              </p>
-            )}
-
-            {/* Dynamic Load More / Show Less Button */}
-            {filteredGallery.length > INITIAL_GALLERY_LIMIT && (
-              <div className="flex justify-center pt-4">
-                {visibleCount < filteredGallery.length ? (
-                  <button
-                    onClick={() => setVisibleCount(filteredGallery.length)}
-                    className="inline-flex items-center justify-center rounded-xl bg-mint-600 hover:bg-mint-700 text-white px-6 py-3 text-xs font-semibold uppercase tracking-wider shadow-md transition-all hover:translate-y-[-2px] cursor-pointer"
-                  >
-                    Load More
-                    <ChevronDown className="ml-2 h-4 w-4" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setVisibleCount(INITIAL_GALLERY_LIMIT)}
-                    className="inline-flex items-center justify-center rounded-xl bg-neutral-800 hover:bg-neutral-700 text-white px-6 py-3 text-xs font-semibold uppercase tracking-wider shadow-md transition-all hover:translate-y-[-2px] cursor-pointer"
-                  >
-                    Show Less
-                    <ChevronDown className="ml-2 h-4 w-4 rotate-180" />
-                  </button>
+              {/* Text Details */}
+              <div className="p-4 space-y-1.5">
+                <h3 className="font-serif text-sm font-semibold text-neutral-900 dark:text-white group-hover:text-mint-600 dark:group-hover:text-mint-400 transition-colors">
+                  {item.title}
+                </h3>
+                {item.description && (
+                  <p className="text-[11px] text-neutral-600 dark:text-neutral-300 line-clamp-2 leading-relaxed">
+                    {item.description}
+                  </p>
                 )}
               </div>
-            )}
-          </div>
-        )}
-      </section>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
 
-      {/* 5. TESTIMONIALS & PATIENT REVIEW SUBMISSION */}
-      {/* 5. TESTIMONIALS & PATIENT REVIEW SUBMISSION */}
-      <section
-        id="testimonials-section"
-        className="bg-mint-105/50 dark:bg-neutral-900/50 py-20 border-y border-neutral-200 dark:border-neutral-800"
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-3 max-w-2xl">
-              <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
-                Patient Verified Feedback
-              </span>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">
-                Real Stories of Life-Changing Recoveries
-              </h2>
-              <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-                Hear directly from individuals who achieved remarkable physical restoration. Reviews are verified with Patient IDs and approved via Sanity Studio.
-              </p>
-            </div>
+      {filteredGallery.length === 0 && (
+        <p className="text-center text-neutral-500 dark:text-neutral-400 py-8 text-sm">
+          Loading..
+        </p>
+      )}
 
+      {/* Dynamic Load More / Show Less Button */}
+      {filteredGallery.length > INITIAL_GALLERY_LIMIT && (
+        <div className="flex justify-center pt-4">
+          {visibleCount < filteredGallery.length ? (
             <button
-              onClick={() => setIsReviewModalOpen(true)}
-              className="inline-flex items-center justify-center rounded-xl bg-mint-600 hover:bg-mint-700 dark:bg-mint-500 dark:hover:bg-mint-400 text-white font-bold text-xs uppercase tracking-wider px-5 py-3.5 shadow-md hover:translate-y-[-2px] transition-all cursor-pointer shrink-0"
+              onClick={() => setVisibleCount(filteredGallery.length)}
+              className="inline-flex items-center justify-center rounded-xl bg-mint-600 hover:bg-mint-700 dark:bg-neutral-800/90 dark:hover:bg-mint-500 dark:border dark:border-white/10 text-white px-6 py-3 text-xs font-semibold uppercase tracking-wider shadow-md transition-all hover:translate-y-[-2px] cursor-pointer"
             >
-              <MessageSquarePlus className="h-4 w-4 mr-2" />
-              Write Patient Review
+              Load More
+              <ChevronDown className="ml-2 h-4 w-4" />
             </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials && testimonials.length > 0 ? (
-              testimonials.map((t, index) => (
-                <motion.div
-                  key={t.id || index}
-                  initial={{ opacity: 0, y: 35 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.6, delay: index * 0.1, ease: 'easeOut' }}
-                  className="rounded-2xl bg-mint-50 dark:bg-neutral-950 p-6 border border-neutral-200/60 dark:border-neutral-800 shadow-sm flex flex-col justify-between space-y-6"
-                >
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex text-amber-400">
-                        {[...Array(t.rating || 5)].map((_, i) => (
-                          <Star key={i} className="h-4 w-4 fill-current" />
-                        ))}
-                      </div>
-                      {t.patientId && (
-                        <span className="inline-flex items-center text-[10px] font-mono font-bold bg-mint-100 dark:bg-mint-950 text-mint-800 dark:text-mint-300 px-2 py-0.5 rounded border border-mint-200 dark:border-mint-900/40">
-                          <UserCheck className="h-3 w-3 mr-1 text-mint-600" />
-                          {t.patientId}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-neutral-700 dark:text-neutral-300 italic leading-relaxed">
-                      "{t.text}"
-                    </p>
-                  </div>
-
-                  <div className="flex items-center space-x-3.5 pt-4 border-t border-neutral-100 dark:border-neutral-800">
-                    <img
-                      src={
-                        t.avatar ||
-                        `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(t.name)}`
-                      }
-                      alt={t.name}
-                      className="h-10 w-10 rounded-full object-cover shrink-0 bg-neutral-100"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div>
-                      <span className="block text-xs font-bold text-neutral-900 dark:text-white">
-                        {t.name}
-                      </span>
-                      {t.location && (
-                        <span className="block text-[10px] text-neutral-400">{t.location}</span>
-                      )}
-                      {t.treatmentReceived && (
-                        <span className="inline-block mt-1 text-[10px] font-medium bg-mint-50 dark:bg-mint-900/30 text-mint-700 dark:text-mint-300 px-2 py-0.5 rounded-full">
-                          Tx: {t.treatmentReceived}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              ))
-            ) : (
-              <div className="col-span-3 text-center py-8 text-neutral-500 dark:text-neutral-400 text-sm">
-                No approved patient reviews yet.
-              </div>
-            )}
-          </div>
+          ) : (
+            <button
+              onClick={() => setVisibleCount(INITIAL_GALLERY_LIMIT)}
+              className="inline-flex items-center justify-center rounded-xl bg-neutral-800 hover:bg-neutral-700 dark:bg-neutral-800/90 dark:hover:bg-neutral-700 dark:border dark:border-white/10 text-white px-6 py-3 text-xs font-semibold uppercase tracking-wider shadow-md transition-all hover:translate-y-[-2px] cursor-pointer"
+            >
+              Show Less
+              <ChevronDown className="ml-2 h-4 w-4 rotate-180" />
+            </button>
+          )}
         </div>
-      </section>
+      )}
+    </div>
+  )}
+</section>
+      {/* 5. TESTIMONIALS & PATIENT REVIEW SUBMISSION */}
+     {/* 5. TESTIMONIALS & PATIENT REVIEW SUBMISSION */}
+      <section
+  id="testimonials-section"
+  className="bg-mint-105/50 dark:bg-neutral-900/30 py-20 border-y border-neutral-200 dark:border-white/10 backdrop-blur-md"
+>
+  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="space-y-3 max-w-2xl">
+        <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
+          Patient Verified Feedback
+        </span>
+        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">
+          Real Stories of Life-Changing Recoveries
+        </h2>
+        <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+          Hear directly from individuals who achieved remarkable physical restoration. Reviews are verified with Patient IDs and approved via Sanity Studio.
+        </p>
+      </div>
+
+      <button
+        onClick={() => setIsReviewModalOpen(true)}
+        className="inline-flex items-center justify-center rounded-xl bg-mint-600 hover:bg-mint-700 dark:bg-mint-500 dark:hover:bg-mint-400 text-white font-bold text-xs uppercase tracking-wider px-5 py-3.5 shadow-md hover:translate-y-[-2px] transition-all cursor-pointer shrink-0"
+      >
+        <MessageSquarePlus className="h-4 w-4 mr-2" />
+        Write Patient Review
+      </button>
+    </div>
+
+    {/* Testimonials Grid */}
+    {visibleTestimonials && visibleTestimonials.length > 0 ? (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <AnimatePresence mode="popLayout">
+          {visibleTestimonials.map((t, index) => (
+            <motion.div
+              key={t.id || index}
+              initial={{ opacity: 0, y: 35 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.4, delay: index * 0.05, ease: 'easeOut' }}
+              /* 
+                👇 Glassmorphism & Hover Styling Added
+              */
+              className="rounded-2xl bg-mint-50/80 dark:bg-neutral-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-white/10 p-6 shadow-sm hover:shadow-xl dark:hover:border-mint-500/30 transition-all duration-300 flex flex-col justify-between space-y-6"
+            >
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex text-amber-400">
+                    {[...Array(t.rating || 5)].map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-current" />
+                    ))}
+                  </div>
+                  {t.patientId && (
+                    <span className="inline-flex items-center text-[10px] font-mono font-bold bg-mint-100/80 dark:bg-mint-900/40 text-mint-800 dark:text-mint-300 px-2 py-0.5 rounded border border-mint-200 dark:border-mint-500/20 backdrop-blur-sm">
+                      <UserCheck className="h-3 w-3 mr-1 text-mint-600 dark:text-mint-400" />
+                      {t.patientId}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-neutral-700 dark:text-neutral-200 italic leading-relaxed">
+                  "{t.text}"
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-3.5 pt-4 border-t border-neutral-200/50 dark:border-white/10">
+                <img
+                  src={
+                    t.avatar ||
+                    `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(t.name)}`
+                  }
+                  alt={t.name}
+                  className="h-10 w-10 rounded-full object-cover shrink-0 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-white/10"
+                  referrerPolicy="no-referrer"
+                />
+                <div>
+                  <span className="block text-xs font-bold text-neutral-900 dark:text-white">
+                    {t.name}
+                  </span>
+                  {t.location && (
+                    <span className="block text-[10px] text-neutral-500 dark:text-neutral-400">{t.location}</span>
+                  )}
+                  {t.treatmentReceived && (
+                    <span className="inline-block mt-1 text-[10px] font-medium bg-mint-100/70 dark:bg-mint-900/30 text-mint-700 dark:text-mint-300 px-2 py-0.5 rounded-full border dark:border-mint-500/20">
+                      Tx: {t.treatmentReceived}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    ) : (
+      <div className="text-center py-8 text-neutral-500 dark:text-neutral-400 text-sm">
+        No approved patient reviews yet.
+      </div>
+    )}
+
+    {/* View All / Show Less Button */}
+   {/* View All / Show Less Button */}
+{testimonials && testimonials.length > INITIAL_TESTIMONIALS_LIMIT && (
+  <div className="flex justify-center pt-4">
+    <button
+      onClick={() => {
+        setShowAllTestimonials((prev) => !prev);
+        if (showAllTestimonials) {
+          document.getElementById('testimonials-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }}
+      /* 
+        👇 Gallery section button styling 적용 
+        (bg-mint-600 hover:bg-mint-700 dark:bg-neutral-800 dark:hover:bg-mint-500)
+      */
+      className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-mint-600 hover:bg-mint-700 dark:bg-neutral-800/90 dark:hover:bg-mint-500 dark:hover:border-mint-500/50 dark:border dark:border-white/10 text-white text-xs font-bold uppercase tracking-wider shadow-md transition-all cursor-pointer hover:translate-y-[-2px]"
+    >
+      {showAllTestimonials ? (
+        <>
+          <ChevronDown className="h-4 w-4 rotate-180 transition-transform" />
+          Show Less
+        </>
+      ) : (
+        <>
+          <ChevronDown className="h-4 w-4 transition-transform" />
+          View All 
+        </>
+      )}
+    </button>
+  </div>
+
+    )}
+  </div>
+</section>
 
       {/* Patient Review Modal */}
       <PatientReviewModal
@@ -653,134 +725,102 @@ export default function HomePage() {
       />
 
       {/* 6. FAQ SECTION */}
-      <section id="faq-section" className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-10">
-        <div className="text-center space-y-3">
-          <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
-            Got Questions?
-          </span>
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-            Learn more about ancient Indian medical systems, our in-house medicine purity, and how treatments
-            work.
-          </p>
-        </div>
+      {/* 6. FAQ SECTION */}
+     <section id="faq-section" className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-10">
+  <div className="text-center space-y-3">
+    <span className="text-xs font-bold text-mint-600 dark:text-mint-400 uppercase tracking-widest block">
+      Got Questions?
+    </span>
+    <h2 className="font-serif text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">
+      Frequently Asked Questions
+    </h2>
+    <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+      Learn more about ancient Indian medical systems, our in-house medicine purity, and how treatments work.
+    </p>
+  </div>
 
-        <div className="space-y-4">
-          {faqs.map((faq) => {
-            const isOpen = activeFaq === faq.id;
-            return (
-              <motion.div
-                key={faq.id}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-20px' }}
-                transition={{ duration: 0.4 }}
-                className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-mint-100 dark:bg-neutral-950 overflow-hidden"
-              >
-                <button
-                  onClick={() => setActiveFaq(isOpen ? null : faq.id)}
-                  className="w-full flex items-center justify-between p-5 text-left font-medium text-neutral-900 dark:text-white hover:bg-mint-200/40 dark:hover:bg-neutral-900/30 transition-colors focus:outline-none cursor-pointer"
-                >
-                  <span className="font-serif text-base sm:text-lg">{faq.question}</span>
-                  <ChevronDown
-                    className={`h-5 w-5 text-neutral-400 shrink-0 transition-transform duration-200 ${
-                      isOpen ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: 'auto' }}
-                      exit={{ height: 0 }}
-                      transition={{ duration: 0.25 }}
-                      className="overflow-hidden border-t border-neutral-100 dark:border-neutral-800"
-                    >
-                      <div className="p-5 text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed bg-mint-50/50 dark:bg-neutral-900/10">
-                        {faq.answer}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
-          <AnimatePresence initial={false}>
-            {visibleFaqs.map((faq) => {
-              const isOpen = activeFaq === faq.id;
-              return (
-                <motion.div
-                  key={faq.id}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.35 }}
-                  className="rounded-2xl border border-neutral-200/60 dark:border-neutral-800 bg-mint-100 dark:bg-neutral-950 overflow-hidden"
-                >
-                  <button
-                    onClick={() => setActiveFaq(isOpen ? null : faq.id)}
-                    className="w-full flex items-center justify-between p-5 text-left font-medium text-neutral-900 dark:text-white hover:bg-mint-200/40 dark:hover:bg-neutral-900/30 transition-colors focus:outline-none cursor-pointer"
-                  >
-                    <span className="font-serif text-base sm:text-lg">{faq.question}</span>
-                    <ChevronDown
-                      className={`h-5 w-5 text-neutral-400 shrink-0 transition-transform duration-200 ${
-                        isOpen ? 'rotate-180' : ''
-                      }`}
-                    />
-                  </button>
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ height: 0 }}
-                        animate={{ height: 'auto' }}
-                        exit={{ height: 0 }}
-                        transition={{ duration: 0.25 }}
-                        className="overflow-hidden border-t border-neutral-100 dark:border-neutral-800"
-                      >
-                        <div className="p-5 text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed bg-mint-50/50 dark:bg-neutral-900/10">
-                          {faq.answer}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        </div>
-
-        {/* View More / Show Less Button */}
-        {faqs.length > 4 && (
-          <div className="flex justify-center pt-2">
+  <div className="space-y-4">
+    <AnimatePresence initial={false}>
+      {visibleFaqs.map((faq) => {
+        const isOpen = activeFaq === faq.id;
+        return (
+          <motion.div
+            key={faq.id}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.35 }}
+            /* 
+              👇 Glassmorphism Styling Added 
+            */
+            className="rounded-2xl border border-neutral-200/60 dark:border-white/10 bg-mint-100/70 dark:bg-neutral-900/40 backdrop-blur-xl overflow-hidden shadow-sm transition-all duration-300 dark:hover:border-mint-500/30"
+          >
             <button
-              onClick={() => {
-                setShowAllFaqs((prev) => !prev);
-                setActiveFaq(null);
-                if (showAllFaqs) {
-                  // Scroll back to FAQ section top when collapsing
-                  document.getElementById('faq-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }}
-              className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-[#134E39] hover:bg-[#0E3D2C] text-white text-xs font-bold uppercase tracking-wider shadow-md transition-all cursor-pointer"
+              onClick={() => setActiveFaq(isOpen ? null : faq.id)}
+              className="w-full flex items-center justify-between p-5 text-left font-medium text-neutral-900 dark:text-white hover:bg-mint-200/40 dark:hover:bg-neutral-800/40 transition-colors focus:outline-none cursor-pointer"
             >
-              {showAllFaqs ? (
-                <>
-                  <ChevronDown className="h-4 w-4 rotate-180 transition-transform" />
-                  Show Less
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="h-4 w-4 transition-transform" />
-                  View All
-                </>
-              )}
+              <span className="font-serif text-base sm:text-lg">{faq.question}</span>
+              <ChevronDown
+                className={`h-5 w-5 text-neutral-400 dark:text-neutral-300 shrink-0 transition-transform duration-200 ${
+                  isOpen ? 'rotate-180 text-mint-600 dark:text-mint-400' : ''
+                }`}
+              />
             </button>
-          </div>
-        )}
-      </section>
+            <AnimatePresence initial={false}>
+              {isOpen && (
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: 'auto' }}
+                  exit={{ height: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="overflow-hidden border-t border-neutral-200/50 dark:border-white/10"
+                >
+                  {/* Inside Content Glass Effect */}
+                  <div className="p-5 text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed bg-mint-50/50 dark:bg-neutral-950/30 backdrop-blur-md">
+                    {faq.answer}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        );
+      })}
+    </AnimatePresence>
+  </div>
+
+  {/* View More / Show Less Button */}
+ {/* View More / Show Less Button */}
+{faqs.length > 4 && (
+  <div className="flex justify-center pt-2">
+    <button
+      onClick={() => {
+        setShowAllFaqs((prev) => !prev);
+        setActiveFaq(null);
+        if (showAllFaqs) {
+          document.getElementById('faq-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }}
+      /* 
+        👇 Gallery section button styling 적용 
+        (bg-mint-600 hover:bg-mint-700 dark:bg-neutral-800 dark:hover:bg-mint-500)
+      */
+      className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-mint-600 hover:bg-mint-700 dark:bg-neutral-800/90 dark:hover:bg-mint-500 dark:hover:border-mint-500/50 dark:border dark:border-white/10 text-white text-xs font-bold uppercase tracking-wider shadow-md transition-all cursor-pointer hover:translate-y-[-2px]"
+    >
+      {showAllFaqs ? (
+        <>
+          <ChevronDown className="h-4 w-4 rotate-180 transition-transform" />
+          Show Less
+        </>
+      ) : (
+        <>
+          <ChevronDown className="h-4 w-4 transition-transform" />
+          View All
+        </>
+      )}
+    </button>
+  </div>
+)}
+</section>
     </div>
   );
 }
