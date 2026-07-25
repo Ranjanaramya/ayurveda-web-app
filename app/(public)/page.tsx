@@ -58,9 +58,6 @@ export default function HomePage() {
   const INITIAL_GALLERY_LIMIT = 8;
   const [visibleCount, setVisibleCount] = useState<number>(INITIAL_GALLERY_LIMIT);
 
-  
-  const [showAllFaqs, setShowAllFaqs] = useState<boolean>(false);
-
   const faqs = getFAQs();
 
  
@@ -500,19 +497,8 @@ export default function HomePage() {
               </motion.div>
             ))}
           </div>
-
-          {/* Content */}
-          <h3 className="font-serif text-lg font-semibold text-neutral-900 dark:text-white mb-2 group-hover:text-mint-600 dark:group-hover:text-mint-400 transition-colors">
-            {spec.title}
-          </h3>
-          <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
-            {spec.desc}
-          </p>
-        </motion.div>
-      ))}
-    </div>
-  </div>
-</section>
+        </div>
+      </section>
 
       {/* 4. GALLERY (DYNAMIC SANITY INTEGRATED) */}
      <section id="gallery-section" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
@@ -595,10 +581,13 @@ export default function HomePage() {
                   </p>
                 )}
               </div>
-            )}
-          </div>
-        )}
-      </section>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    </div>
+  )}
+</section>
 
       {/* 5. TESTIMONIALS & PATIENT REVIEW SUBMISSION */}
       <section
@@ -629,30 +618,10 @@ export default function HomePage() {
     </div>
 
     {/* Testimonials Grid */}
-    {visibleTestimonials && visibleTestimonials.length > 0 ? (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <AnimatePresence mode="popLayout">
-          {visibleTestimonials.map((t, index) => (
-            <motion.div
-              key={t.id || index}
-              initial={{ opacity: 0, y: 35 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.4, delay: index * 0.05, ease: 'easeOut' }}
-              /* 
-                👇 Glassmorphism & Hover Styling Added
-              */
-              className="rounded-2xl bg-mint-50/80 dark:bg-neutral-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-white/10 p-6 shadow-sm hover:shadow-xl dark:hover:border-mint-500/30 transition-all duration-300 flex flex-col justify-between space-y-6"
-            >
-              <MessageSquarePlus className="h-4 w-4 mr-2" />
-              Write Patient Review
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <AnimatePresence initial={false}>
-              {visibleReviews && visibleReviews.length > 0 ? (
-                visibleReviews.map((t, index) => (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <AnimatePresence initial={false}>
+        {visibleReviews && visibleReviews.length > 0 ? (
+          visibleReviews.map((t, index) => (
                   <motion.div
                     key={t.id || index}
                     initial={{ opacity: 0, y: 25, scale: 0.96 }}
@@ -775,29 +744,43 @@ export default function HomePage() {
         </div>
 
         <div className="space-y-4">
-          <AnimatePresence initial={false}>
-            {visibleFaqs.map((faq) => {
-              const isOpen = activeFaq === faq.id;
-              return (
-                <motion.div
-                  initial={{ height: 0 }}
-                  animate={{ height: 'auto' }}
-                  exit={{ height: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="overflow-hidden border-t border-neutral-200/50 dark:border-white/10"
+          {visibleFaqs.map((faq) => {
+            const isOpen = activeFaq === faq.id;
+            return (
+              <div
+                key={faq.id}
+                className="rounded-2xl bg-mint-50/70 dark:bg-neutral-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-white/10 overflow-hidden shadow-sm hover:shadow-md transition-all"
+              >
+                <button
+                  onClick={() => setActiveFaq(isOpen ? null : faq.id)}
+                  className="w-full flex items-center justify-between p-5 text-left font-serif font-semibold text-neutral-900 dark:text-white text-base focus:outline-none cursor-pointer"
                 >
-                  {/* Inside Content Glass Effect */}
-                  <div className="p-5 text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed bg-mint-50/50 dark:bg-neutral-950/30 backdrop-blur-md">
-                    {faq.answer}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        );
-      })}
-    </AnimatePresence>
-  </div>
+                  <span>{faq.question}</span>
+                  <ChevronDown
+                    className={`h-5 w-5 text-mint-600 dark:text-mint-400 transition-transform duration-300 ${
+                      isOpen ? 'transform rotate-180' : ''
+                    }`}
+                  />
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="overflow-hidden border-t border-neutral-200/50 dark:border-white/10"
+                    >
+                      <div className="p-5 text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed bg-mint-50/50 dark:bg-neutral-950/30 backdrop-blur-md">
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
 
   {/* View More / Show Less Button */}
  {/* View More / Show Less Button */}
