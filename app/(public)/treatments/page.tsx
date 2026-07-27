@@ -100,7 +100,7 @@ export default function TreatmentsPage() {
           <Loader2 className="h-8 w-8 animate-spin text-mint-600 dark:text-mint-400" />
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <AnimatePresence mode="popLayout">
             {filteredTreatments.map((treatment) => (
               <motion.div
@@ -117,10 +117,10 @@ export default function TreatmentsPage() {
                   dark:border-white/10 
                   dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]
                 */
-                className="group flex flex-col md:flex-row rounded-3xl overflow-hidden bg-mint-100/80 dark:bg-neutral-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-white/10 shadow-sm hover:shadow-xl dark:hover:border-mint-500/30 transition-all duration-300 w-full md:h-[400px]"
+                className="group flex flex-col xl:flex-row rounded-3xl overflow-hidden bg-mint-100/80 dark:bg-neutral-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-white/10 shadow-sm hover:shadow-xl dark:hover:border-mint-500/30 transition-all duration-300 w-full xl:h-[420px]"
               >
                 {/* Card Image */}
-                <div className="relative w-full md:w-5/12 h-64 md:h-full bg-neutral-100 dark:bg-neutral-800/50 shrink-0 overflow-hidden">
+                <div className="relative w-full xl:w-5/12 h-64 xl:h-full bg-neutral-100 dark:bg-neutral-800/50 shrink-0 overflow-hidden">
                   {treatment.image && urlFor(treatment.image) ? (
                     <img
                       src={urlFor(treatment.image)?.url() || ""}
