@@ -18,6 +18,7 @@ import {
   UserCheck,
   Loader2,
   Quote,
+  RotateCw,
 } from 'lucide-react';
 import { getFAQs } from '../../lib/mockSanity';
 import { fetchApprovedReviews } from '../../services/reviewService';
@@ -40,6 +41,15 @@ export default function HomePage() {
   >('All');
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
+  const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({});
+
+  const toggleCardFlip = (index: number) => {
+    setFlippedCards((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
 
   const INITIAL_TESTIMONIALS_LIMIT = 3;
   const [showAllTestimonials, setShowAllTestimonials] = useState<boolean>(false);
@@ -451,9 +461,23 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.5, delay: i * 0.08, ease: 'easeOut' }}
-                className="perspective-1000 w-full h-[320px] group cursor-pointer"
+                className="perspective-1000 w-full h-[320px] group cursor-pointer select-none"
+                onClick={() => toggleCardFlip(i)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleCardFlip(i);
+                  }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={`${spec.title} - Click or tap to flip card`}
               >
-                <div className="relative w-full h-full duration-700 transform-style-3d group-hover:[transform:rotateY(180deg)] transition-all">
+                <div
+                  className={`relative w-full h-full duration-700 transform-style-3d transition-all group-hover-flip ${
+                    flippedCards[i] ? '[transform:rotateY(180deg)]' : ''
+                  }`}
+                >
                   {/* Front Face: Image & Title */}
                   <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden shadow-md border border-neutral-200/60 dark:border-neutral-800 bg-neutral-900">
                     <img
@@ -466,17 +490,29 @@ export default function HomePage() {
                       className="w-full h-full object-cover brightness-95 group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/90 via-neutral-950/20 to-transparent flex flex-col justify-end p-6">
-                      <h3 className="font-serif text-lg font-semibold text-white leading-snug drop-shadow">
-                        {spec.title}
-                      </h3>
+                      <div className="flex items-end justify-between">
+                        <h3 className="font-serif text-lg font-semibold text-white leading-snug drop-shadow">
+                          {spec.title}
+                        </h3>
+                        <span className="inline-flex items-center space-x-1 rounded-full bg-neutral-900/70 border border-white/20 px-2.5 py-1 text-[10px] font-medium text-neutral-200 backdrop-blur-md shrink-0 ml-2 shadow-sm">
+                          <RotateCw className="h-3 w-3 text-mint-400" />
+                          <span className="text-[10px]">Tap / Hover</span>
+                        </span>
+                      </div>
                     </div>
                   </div>
 
                   {/* Back Face: Original Content */}
                   <div className="absolute inset-0 w-full h-full backface-hidden [transform:rotateY(180deg)] rounded-2xl bg-mint-100 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800 p-6 flex flex-col justify-between shadow-md">
                     <div>
-                      <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-mint-50 dark:bg-mint-900/30">
-                        {spec.icon}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-mint-50 dark:bg-mint-900/30">
+                          {spec.icon}
+                        </div>
+                        <span className="inline-flex items-center space-x-1 rounded-full bg-mint-200/70 dark:bg-neutral-900 border border-mint-300 dark:border-neutral-800 px-2.5 py-1 text-[10px] font-medium text-neutral-700 dark:text-neutral-300 backdrop-blur-md shadow-sm">
+                          <RotateCw className="h-3 w-3 text-mint-600 dark:text-mint-400" />
+                          <span className="text-[10px]">Flip back</span>
+                        </span>
                       </div>
                       <h3 className="font-serif text-lg font-semibold text-neutral-900 dark:text-white mb-2">
                         {spec.title}
