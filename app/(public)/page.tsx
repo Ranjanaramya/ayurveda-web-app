@@ -43,12 +43,24 @@ export default function HomePage() {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({});
+  const [autoFlipped, setAutoFlipped] = useState<Record<number, boolean>>({});
 
   const toggleCardFlip = (index: number) => {
     setFlippedCards((prev) => ({
       ...prev,
       [index]: !prev[index],
     }));
+  };
+
+  const handleAutoFlip = (index: number) => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      if (!autoFlipped[index]) {
+        setAutoFlipped((prev) => ({ ...prev, [index]: true }));
+        setTimeout(() => {
+          setFlippedCards((prev) => ({ ...prev, [index]: true }));
+        }, 500);
+      }
+    }
   };
 
   const INITIAL_TESTIMONIALS_LIMIT = 3;
@@ -459,7 +471,9 @@ export default function HomePage() {
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileTap={{ scale: 0.97 }}
                 viewport={{ once: true, margin: '-40px' }}
+                onViewportEnter={() => handleAutoFlip(i)}
                 transition={{ duration: 0.5, delay: i * 0.08, ease: 'easeOut' }}
                 className="perspective-1000 w-full h-[320px] group cursor-pointer select-none"
                 onClick={() => toggleCardFlip(i)}
@@ -494,9 +508,8 @@ export default function HomePage() {
                         <h3 className="font-serif text-lg font-semibold text-white leading-snug drop-shadow">
                           {spec.title}
                         </h3>
-                        <span className="inline-flex items-center space-x-1 rounded-full bg-neutral-900/70 border border-white/20 px-2.5 py-1 text-[10px] font-medium text-neutral-200 backdrop-blur-md shrink-0 ml-2 shadow-sm">
-                          <RotateCw className="h-3 w-3 text-mint-400" />
-                          <span className="text-[10px]">Tap / Hover</span>
+                        <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-neutral-900/80 border border-white/25 text-mint-400 backdrop-blur-md shrink-0 ml-2 shadow-md transition-all duration-300 group-hover:scale-110 group-hover:bg-mint-500 group-hover:text-neutral-950">
+                          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
                         </span>
                       </div>
                     </div>
@@ -509,9 +522,8 @@ export default function HomePage() {
                         <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-mint-50 dark:bg-mint-900/30">
                           {spec.icon}
                         </div>
-                        <span className="inline-flex items-center space-x-1 rounded-full bg-mint-200/70 dark:bg-neutral-900 border border-mint-300 dark:border-neutral-800 px-2.5 py-1 text-[10px] font-medium text-neutral-700 dark:text-neutral-300 backdrop-blur-md shadow-sm">
-                          <RotateCw className="h-3 w-3 text-mint-600 dark:text-mint-400" />
-                          <span className="text-[10px]">Flip back</span>
+                        <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-mint-200/80 dark:bg-neutral-900 border border-mint-300 dark:border-neutral-800 text-mint-600 dark:text-mint-400 backdrop-blur-md shadow-md transition-transform duration-300 hover:scale-110">
+                          <ArrowRight className="h-4 w-4 rotate-180" />
                         </span>
                       </div>
                       <h3 className="font-serif text-lg font-semibold text-neutral-900 dark:text-white mb-2">
