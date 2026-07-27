@@ -60,3 +60,10 @@ body {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
+
+@media (hover: hover) {
+  .group:hover .group-hover-flip {
+    transform: rotateY(180deg);
+  }
+}
+
