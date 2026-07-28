@@ -131,7 +131,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="antialiased min-h-screen bg-mint-50 text-neutral-800 dark:bg-mint-950 dark:text-neutral-100 flex flex-col justify-between selection:bg-mint-200 dark:selection:bg-mint-900 selection:text-mint-900 transition-colors duration-300">
+      <body suppressHydrationWarning className="antialiased min-h-screen bg-mint-50 text-neutral-800 dark:bg-mint-950 dark:text-neutral-100 flex flex-col justify-between selection:bg-mint-200 dark:selection:bg-mint-900 selection:text-mint-900 transition-colors duration-300">
         {/* NextTopLoader Added for smooth page transition bar */}
         <NextTopLoader
           color="#10B981"

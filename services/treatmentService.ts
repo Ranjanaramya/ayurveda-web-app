@@ -1,14 +1,15 @@
 import { fetchTreatments } from '../lib/sanity/fetch';
+import { getTreatments as getMockTreatments } from '../lib/mockSanity';
 import { Treatment } from '../types/treatment';
 
 export async function getTreatmentsList(): Promise<Treatment[]> {
   try {
-    return await fetchTreatments();
+    const data = await fetchTreatments();
+    return data && data.length > 0 ? data : getMockTreatments();
   } catch (error) {
-    console.error('Error fetching treatments:', error);
-    return [];
+    console.warn('Error fetching treatments, using local fallback:', error);
+    return getMockTreatments();
   }
 }
 
-// Gallery Component-kkaga getTreatments export-um identical-a irukka alias panni irukkom
 export const getTreatments = getTreatmentsList;

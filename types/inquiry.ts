@@ -7,6 +7,8 @@ export interface PatientInquiry {
   preferredTime: string;
   doctorId: string;
   treatmentId: string;
+  doctorName?: string;
+  treatmentName?: string;
   message: string;
   createdAt: string;
   status: 'Pending' | 'Confirmed' | 'Completed';

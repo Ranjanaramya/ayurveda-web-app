@@ -1,10 +1,6 @@
 import { fetchInquiries } from '../lib/sanity/fetch';
-import { saveInquiries, getInquiries } from '../lib/mockSanity';
 import { client } from '../lib/sanity/client';
-import { projectId } from '../sanity/env';
 import { PatientInquiry } from '../types/inquiry';
-
-const isMock = !projectId || projectId === 'mock-id';
 
 export async function getInquiriesList(): Promise<PatientInquiry[]> {
   try {
@@ -25,14 +21,26 @@ export async function createPatientInquiry(
     status: 'Pending',
   };
 
-  if (isMock) {
-    const inquiries = getInquiries();
-    saveInquiries([newInquiry, ...inquiries]);
-    return newInquiry;
+  try {
+    const response = await fetch('/api/inquiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(inquiry),
+    });
+
+    if (response.ok) {
+      const resData = await response.json();
+      if (resData?.id) {
+        newInquiry.id = resData.id;
+        return newInquiry;
+      }
+    }
+  } catch (err) {
+    console.warn('API inquiry endpoint error, attempting direct client write:', err);
   }
 
   try {
-    const sanityDoc = {
+    const result = await client.create({
       _type: 'patientInquiry',
       patientName: newInquiry.patientName,
       email: newInquiry.email,
@@ -41,23 +49,17 @@ export async function createPatientInquiry(
       preferredTime: newInquiry.preferredTime,
       doctorId: newInquiry.doctorId,
       treatmentId: newInquiry.treatmentId,
+      doctorName: newInquiry.doctorName || 'Any Available Specialist',
+      treatmentName: newInquiry.treatmentName || 'General Consultation',
       message: newInquiry.message,
       status: newInquiry.status,
-    };
-
-    // Note: Creating via client usually needs a write token. If it fails, fallback to local storage
-    const result = await client.create(sanityDoc);
-    return {
-      ...newInquiry,
-      id: result._id,
-    };
-  } catch (error) {
-    console.warn(
-      'Failed to write to Sanity directly (normal if write tokens are unset). Saving to localStorage instead.',
-      error
-    );
-    const inquiries = getInquiries();
-    saveInquiries([newInquiry, ...inquiries]);
-    return newInquiry;
+    });
+    if (result?._id) {
+      newInquiry.id = result._id;
+    }
+  } catch (clientErr) {
+    console.error('Sanity client direct write error:', clientErr);
   }
+
+  return newInquiry;
 }

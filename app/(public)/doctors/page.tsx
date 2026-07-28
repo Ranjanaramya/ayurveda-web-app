@@ -261,7 +261,7 @@ export default function DoctorsPage() {
       {/* Empty state — no doctors in Sanity yet */}
       {!loading && doctors.length === 0 && (
         <div className="text-center py-20 text-neutral-500 dark:text-neutral-400">
-          <p className="text-sm">No doctors found. Please add doctors in Sanity Studio.</p>
+          <p className="text-sm">No doctors found.</p>
         </div>
       )}
     </motion.div>

@@ -93,4 +93,18 @@ export const doctor = defineType({
       type: 'string',
     }),
   ],
+  preview: {
+    select: {
+      title: 'name',
+      subtitle: 'role',
+      media: 'image',
+    },
+    prepare({ title, subtitle, media }) {
+      return {
+        title: title || 'Untitled Doctor',
+        subtitle: subtitle || 'Ayurvedic Specialist',
+        media: media,
+      };
+    },
+  },
 });

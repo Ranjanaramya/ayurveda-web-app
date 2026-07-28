@@ -12,4 +12,6 @@ export interface Doctor {
     timeSlot: string;
   };
   contactEmail: string;
+  treatmentIds?: string[];
+  availableTimeSlots?: string[];
 }

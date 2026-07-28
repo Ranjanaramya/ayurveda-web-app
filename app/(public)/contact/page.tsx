@@ -399,7 +399,7 @@ export default function ContactPage() {
                   Message Sent Successfully!
                 </h3>
                 <p className="text-xs text-neutral-600 dark:text-neutral-300 max-w-sm mx-auto">
-                  Thank you for reaching out. Your message has been logged in Sanity and our administration office will respond within 24 hours.
+                  Thank you for reaching out. Your message has been logged in our system and our administration office will respond within 24 hours.
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
