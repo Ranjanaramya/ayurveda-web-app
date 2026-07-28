@@ -53,9 +53,11 @@ export const doctor = defineType({
       title: 'Years of Experience',
       type: 'string',
     }),
+
+    // 🟢 UPDATED: Availability Object structured for dynamic selection
     defineField({
       name: 'availability',
-      title: 'Clinic Hours',
+      title: 'Clinic Availability',
       type: 'object',
       fields: [
         defineField({
@@ -63,14 +65,28 @@ export const doctor = defineType({
           title: 'Active Days',
           type: 'array',
           of: [{ type: 'string' }],
+          options: {
+            list: [
+              { title: 'Monday', value: 'Monday' },
+              { title: 'Tuesday', value: 'Tuesday' },
+              { title: 'Wednesday', value: 'Wednesday' },
+              { title: 'Thursday', value: 'Thursday' },
+              { title: 'Friday', value: 'Friday' },
+              { title: 'Saturday', value: 'Saturday' },
+              { title: 'Sunday', value: 'Sunday' },
+            ],
+          },
         }),
         defineField({
-          name: 'timeSlot',
-          title: 'Time Slot',
-          type: 'string',
+          name: 'timeSlots',
+          title: 'Time Slots',
+          type: 'array',
+          of: [{ type: 'string' }],
+          description: 'Add slots e.g. "08:30 AM - 11:30 AM", "02:00 PM - 05:00 PM"',
         }),
       ],
     }),
+
     defineField({
       name: 'contactEmail',
       title: 'Contact Email',

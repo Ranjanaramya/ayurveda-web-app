@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Playfair_Display, JetBrains_Mono } from 'next/font/google';
+import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
 import { LayoutShell } from '../components/layout/LayoutShell';
 
@@ -131,6 +132,18 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased min-h-screen bg-mint-50 text-neutral-800 dark:bg-mint-950 dark:text-neutral-100 flex flex-col justify-between selection:bg-mint-200 dark:selection:bg-mint-900 selection:text-mint-900 transition-colors duration-300">
+        {/* NextTopLoader Added for smooth page transition bar */}
+        <NextTopLoader
+          color="#10B981"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px #10B981,0 0 5px #10B981"
+        />
         <LayoutShell>{children}</LayoutShell>
       </body>
     </html>

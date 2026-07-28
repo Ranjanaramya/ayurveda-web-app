@@ -18,6 +18,7 @@
     "motion": "^12.23.24",
     "next": "^15.1.4",
     "next-sanity": "^9.12.3",
+    "nextjs-toploader": "^3.9.17",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sanity": "^3.68.0",

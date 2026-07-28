@@ -3,32 +3,58 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Phone, Mail, MapPin, Clock, ShieldAlert, CheckCircle, Calendar, Sparkles } from 'lucide-react';
-import { getDoctors, getTreatments } from '@/lib/mockSanity';
+import { Phone, Mail, MapPin, Clock, ShieldAlert, CheckCircle, Calendar } from 'lucide-react';
+import { getTreatments } from '@/lib/mockSanity'; // Treatments மட்டும் வைத்துக் கொள்ளலாம்
 import { createPatientInquiry } from '@/services/inquiryService';
 import { CLINIC_INFO } from '@/lib/constants';
 import { Loader } from '@/components/common/Loader';
+import { client } from '@/sanity/lib/client'; // Sanity client-ஐ இறக்குமதி செய்யவும்
+
+interface Doctor {
+  _id: string;
+  name: string;
+  role?: string;
+}
 
 function AppointmentForm() {
   const searchParams = useSearchParams();
   const doctorIdParam = searchParams.get('doctorId') || '';
   const treatmentIdParam = searchParams.get('treatmentId') || '';
 
-  const doctors = getDoctors();
   const treatments = getTreatments();
+
+  // Dynamic States for Sanity Doctors & Slots
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [availableDays, setAvailableDays] = useState<string[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
 
   // Form states
   const [patientName, setPatientName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [preferredDate, setPreferredDate] = useState('');
-  const [preferredTime, setPreferredTime] = useState('08:30 AM - 11:30 AM');
+  const [preferredTime, setPreferredTime] = useState('');
   const [selectedDoctorId, setSelectedDoctorId] = useState('');
   const [selectedTreatmentId, setSelectedTreatmentId] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // 1. Sanity-யிலிருந்து Doctors பட்டியலை Fetch செய்ய
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const query = `*[_type == "doctor"]{ _id, name, role }`;
+        const data = await client.fetch(query);
+        setDoctors(data || []);
+      } catch (err) {
+        console.error('Failed to fetch doctors list:', err);
+      }
+    };
+    fetchDoctors();
+  }, []);
 
   // Sync params on mount/change
   useEffect(() => {
@@ -38,6 +64,46 @@ function AppointmentForm() {
   useEffect(() => {
     if (treatmentIdParam) setSelectedTreatmentId(treatmentIdParam);
   }, [treatmentIdParam]);
+
+  // 2. Doctor Select செய்யும் போது GROQ Query மூலம் Available Slots Fetch செய்தல்
+  useEffect(() => {
+    if (!selectedDoctorId) {
+      setAvailableSlots([]);
+      setAvailableDays([]);
+      setPreferredTime('');
+      return;
+    }
+
+    const fetchDoctorAvailability = async () => {
+      setLoadingSlots(true);
+      try {
+       const query = `*[_type == "doctor" && _id == $doctorId][0]{
+  "days": availability.days,
+  "timeSlots": availability.timeSlots
+}`;
+
+        const data = await client.fetch(query, { doctorId: selectedDoctorId });
+
+        if (data?.timeSlots && data.timeSlots.length > 0) {
+          setAvailableSlots(data.timeSlots);
+          setPreferredTime(data.timeSlots[0]); // Default-ஆக முதல் Slot-ஐ Select செய்கிறது
+        } else {
+          setAvailableSlots([]);
+          setPreferredTime('');
+        }
+
+        if (data?.days) {
+          setAvailableDays(data.days);
+        }
+      } catch (err) {
+        console.error('Failed to fetch doctor availability:', err);
+      } finally {
+        setLoadingSlots(false);
+      }
+    };
+
+    fetchDoctorAvailability();
+  }, [selectedDoctorId]);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -108,7 +174,7 @@ function AppointmentForm() {
       setEmail('');
       setPhone('');
       setPreferredDate('');
-      setPreferredTime('08:30 AM - 11:30 AM');
+      setPreferredTime('');
       setMessage('');
       setSelectedDoctorId('');
       setSelectedTreatmentId('');
@@ -119,6 +185,9 @@ function AppointmentForm() {
       alert('Failed to log booking inquiry. Please try again.');
     }
   };
+
+  /* Reusable Input Styling for Form Uniformity & Large Touch Targets */
+  const inputBaseStyle = `w-full rounded-xl bg-white dark:bg-neutral-950 border px-4 py-3.5 text-sm sm:text-base font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 shadow-sm transition-all duration-200`;
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-16">
@@ -138,9 +207,8 @@ function AppointmentForm() {
 
       {/* Main Content Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Emergency Assistance + Hospital Info (5 cols) */}
+        {/* Left Column: Emergency Assistance + Hospital Info */}
         <div className="lg:col-span-5 space-y-6">
-          {/* Emergency Assistance Notice — top, matching Contact page */}
           <div className="p-6 rounded-2xl bg-[#FAF6EE] dark:bg-amber-950/30 border border-[#EFE6D5] dark:border-amber-900/40 flex items-start space-x-4 shadow-sm">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E8D9C0] dark:bg-amber-900/60 text-[#A07038] dark:text-amber-400 mt-0.5">
               <ShieldAlert className="h-5 w-5 animate-pulse" />
@@ -160,7 +228,6 @@ function AppointmentForm() {
             </div>
           </div>
 
-          {/* Hospital Info Card */}
           <div className="rounded-3xl bg-[#FDFBF7] dark:bg-neutral-900/60 border border-[#F0EBE1] dark:border-neutral-800 p-8 space-y-8 shadow-sm">
             <h2 className="font-serif text-2xl font-bold text-[#1B4D3E] dark:text-emerald-300">
               AyurVeda Care Hospital
@@ -171,7 +238,6 @@ function AppointmentForm() {
             </p>
 
             <div className="space-y-6">
-              {/* Hotlines */}
               <div className="flex items-start space-x-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-emerald-950/60 dark:text-emerald-400">
                   <Phone className="h-5 w-5" />
@@ -195,7 +261,6 @@ function AppointmentForm() {
                 </div>
               </div>
 
-              {/* Emails */}
               <div className="flex items-start space-x-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-emerald-950/60 dark:text-emerald-400">
                   <Mail className="h-5 w-5" />
@@ -219,7 +284,6 @@ function AppointmentForm() {
                 </div>
               </div>
 
-              {/* Address */}
               <div className="flex items-start space-x-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-emerald-950/60 dark:text-emerald-400">
                   <MapPin className="h-5 w-5" />
@@ -234,7 +298,6 @@ function AppointmentForm() {
                 </div>
               </div>
 
-              {/* Hours */}
               <div className="flex items-start space-x-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E3F2E9] text-[#1B4D3E] dark:bg-emerald-950/60 dark:text-emerald-400">
                   <Clock className="h-5 w-5" />
@@ -253,7 +316,7 @@ function AppointmentForm() {
           </div>
         </div>
 
-        {/* Right Column: Appointment Booking Form (7 cols) */}
+        {/* Right Column: Appointment Booking Form */}
         <div id="appointment-form-section" className="lg:col-span-7">
           <div className="rounded-3xl bg-[#DDEEE3] dark:bg-neutral-900/90 border border-[#C5DFC8] dark:border-neutral-800 p-8 sm:p-10 shadow-sm space-y-6">
 
@@ -275,12 +338,12 @@ function AppointmentForm() {
                     </h3>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {/* Full Name */}
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                       <label
                         htmlFor="patient-name"
-                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
+                        className="block text-xs font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
                       >
                         PATIENT FULL NAME <span className="text-red-500">*</span>
                       </label>
@@ -293,18 +356,18 @@ function AppointmentForm() {
                           setPatientName(e.target.value);
                           if (errors.patientName) setErrors((prev) => ({ ...prev, patientName: '' }));
                         }}
-                        className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
+                        className={`${inputBaseStyle} ${
                           errors.patientName ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
-                        } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 shadow-sm`}
+                        }`}
                       />
                       {errors.patientName && <p className="text-xs text-red-500 font-medium mt-1">{errors.patientName}</p>}
                     </div>
 
                     {/* Email address */}
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                       <label
                         htmlFor="patient-email"
-                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
+                        className="block text-xs font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
                       >
                         EMAIL ADDRESS <span className="text-red-500">*</span>
                       </label>
@@ -319,9 +382,9 @@ function AppointmentForm() {
                           setEmail(e.target.value);
                           if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
                         }}
-                        className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
+                        className={`${inputBaseStyle} ${
                           errors.email ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
-                        } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 shadow-sm`}
+                        }`}
                       />
                       <datalist id="appt-email-suggestions">
                         {email.includes('@') ? null : [
@@ -334,19 +397,77 @@ function AppointmentForm() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {/* Doctor & Treatment Selection */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    {/* Preferred Doctor selection */}
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="select-doctor"
+                        className="block text-xs font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
+                      >
+                        AYURVEDIC CONSULTANT EXPERT
+                      </label>
+                      <select
+                        id="select-doctor"
+                        value={selectedDoctorId}
+                        onChange={(e) => setSelectedDoctorId(e.target.value)}
+                        className={`${inputBaseStyle} border-[#C8DCD0] dark:border-neutral-800 cursor-pointer`}
+                      >
+                        <option value="" className="dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200">
+                          Any Available Specialist
+                        </option>
+                        {doctors.map((doc) => (
+                          <option key={doc._id} value={doc._id} className="dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200">
+                            {doc.name} {doc.role ? `(${doc.role})` : ''}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Preferred Treatment selection */}
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="select-treatment"
+                        className="block text-xs font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
+                      >
+                        PREFERRED THERAPY / TREATMENT
+                      </label>
+                      <select
+                        id="select-treatment"
+                        value={selectedTreatmentId}
+                        onChange={(e) => setSelectedTreatmentId(e.target.value)}
+                        className={`${inputBaseStyle} border-[#C8DCD0] dark:border-neutral-800 cursor-pointer`}
+                      >
+                        <option value="" className="dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200">General Health Check-up</option>
+                        {treatments.map((tr) => (
+                          <option key={tr.id} value={tr.id} className="dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200">
+                            {tr.name} ({tr.category})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Active Days Notification Badge */}
+                  {availableDays.length > 0 && (
+                    <div className="p-3 bg-emerald-100/60 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 rounded-xl text-xs text-emerald-800 dark:text-emerald-300 font-medium">
+                      ✨ <strong>Doctor Working Days:</strong> {availableDays.join(', ')}
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {/* Phone Number */}
-                    <div className="space-y-1.5 sm:col-span-1">
+                    <div className="space-y-2">
                       <label
                         htmlFor="patient-phone"
-                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
+                        className="block text-xs font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
                       >
                         PHONE / WHATSAPP <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="tel"
                         id="patient-phone"
-                        placeholder="e.g. +91 98765 43210"
+                        placeholder="e.g. +94 77 123 4567"
                         maxLength={15}
                         inputMode="numeric"
                         value={phone}
@@ -360,18 +481,18 @@ function AppointmentForm() {
                           setPhone(e.target.value);
                           if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }));
                         }}
-                        className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
+                        className={`${inputBaseStyle} ${
                           errors.phone ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
-                        } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 shadow-sm`}
+                        }`}
                       />
                       {errors.phone && <p className="text-xs text-red-500 font-medium mt-1">{errors.phone}</p>}
                     </div>
 
                     {/* Preferred Date */}
-                    <div className="space-y-1.5 sm:col-span-1">
+                    <div className="space-y-2">
                       <label
                         htmlFor="appointment-date"
-                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
+                        className="block text-xs font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
                       >
                         PREFERRED DATE <span className="text-red-500">*</span>
                       </label>
@@ -383,88 +504,52 @@ function AppointmentForm() {
                           setPreferredDate(e.target.value);
                           if (errors.preferredDate) setErrors((prev) => ({ ...prev, preferredDate: '' }));
                         }}
-                        className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
+                        className={`${inputBaseStyle} ${
                           errors.preferredDate ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
-                        } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 shadow-sm`}
+                        }`}
                       />
                       {errors.preferredDate && <p className="text-xs text-red-500 font-medium mt-1">{errors.preferredDate}</p>}
                     </div>
+                  </div>
 
-                    {/* Preferred Time */}
-                    <div className="space-y-1.5 sm:col-span-1">
-                      <label
-                        htmlFor="preferred-time"
-                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
-                      >
-                        PREFERRED HOURS
-                      </label>
+                  {/* Dynamic Time Slots Dropdown */}
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="preferred-time"
+                      className="block text-xs font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
+                    >
+                      DYNAMIC TIME SLOTS
+                    </label>
+                    {loadingSlots ? (
+                      <p className="text-xs text-neutral-500 animate-pulse py-2">Fetching available doctor slots...</p>
+                    ) : (
                       <select
                         id="preferred-time"
                         value={preferredTime}
                         onChange={(e) => setPreferredTime(e.target.value)}
-                        className="w-full rounded-xl bg-white dark:bg-neutral-950 border border-[#C8DCD0] dark:border-neutral-800 px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 cursor-pointer shadow-sm"
+                        disabled={!selectedDoctorId || availableSlots.length === 0}
+                        className={`${inputBaseStyle} border-[#C8DCD0] dark:border-neutral-800 cursor-pointer disabled:opacity-50`}
                       >
-                        <option value="08:30 AM - 11:30 AM">Morning (08:30 AM - 11:30 AM)</option>
-                        <option value="11:30 AM - 02:00 PM">Mid-Day (11:30 AM - 02:00 PM)</option>
-                        <option value="02:00 PM - 05:00 PM">Afternoon (02:00 PM - 05:00 PM)</option>
-                        <option value="05:00 PM - 07:30 PM">Evening (05:00 PM - 07:30 PM)</option>
+                        {!selectedDoctorId ? (
+                          <option value="">Please choose a doctor first</option>
+                        ) : availableSlots.length === 0 ? (
+                          <option value="">No time slots found for this doctor</option>
+                        ) : (
+                          availableSlots.map((slot, index) => (
+                            <option key={index} value={slot} className="dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200">
+                              {slot}
+                            </option>
+                          ))
+                        )}
                       </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Preferred Doctor selection */}
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="select-doctor"
-                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
-                      >
-                        AYURVEDIC CONSULTANT EXPERT
-                      </label>
-                      <select
-                        id="select-doctor"
-                        value={selectedDoctorId}
-                        onChange={(e) => setSelectedDoctorId(e.target.value)}
-                        className="w-full rounded-xl bg-white dark:bg-neutral-950 border border-[#C8DCD0] dark:border-neutral-800 px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 cursor-pointer shadow-sm"
-                      >
-                        <option value="">Any Available Specialist</option>
-                        {doctors.map((doc) => (
-                          <option key={doc.id} value={doc.id}>
-                            {doc.name} - ({doc.role})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Preferred Treatment selection */}
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="select-treatment"
-                        className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
-                      >
-                        PREFERRED THERAPY / TREATMENT
-                      </label>
-                      <select
-                        id="select-treatment"
-                        value={selectedTreatmentId}
-                        onChange={(e) => setSelectedTreatmentId(e.target.value)}
-                        className="w-full rounded-xl bg-white dark:bg-neutral-950 border border-[#C8DCD0] dark:border-neutral-800 px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 cursor-pointer shadow-sm"
-                      >
-                        <option value="">General Health Check-up</option>
-                        {treatments.map((tr) => (
-                          <option key={tr.id} value={tr.id}>
-                            {tr.name} ({tr.category})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    )}
                   </div>
 
                   {/* Message/Symptoms notes */}
-                  <div className="space-y-1.5">
+                  <div className="space-y-2">
                     <label
                       htmlFor="symptoms-message"
-                      className="block text-[11px] font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
+                      className="block text-xs font-bold text-[#2C5E4B] dark:text-emerald-300 uppercase tracking-wider"
                     >
                       DESCRIBE SYMPTOMS OR RECOVERY GOALS
                     </label>
@@ -477,9 +562,9 @@ function AppointmentForm() {
                         setMessage(e.target.value);
                         if (errors.message) setErrors((prev) => ({ ...prev, message: '' }));
                       }}
-                      className={`w-full rounded-xl bg-white dark:bg-neutral-950 border ${
+                      className={`${inputBaseStyle} resize-none ${
                         errors.message ? 'border-red-500 ring-1 ring-red-500' : 'border-[#C8DCD0] dark:border-neutral-800'
-                      } px-4 py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 resize-none shadow-sm`}
+                      }`}
                     />
                     {errors.message && <p className="text-xs text-red-500 font-medium mt-1">{errors.message}</p>}
                   </div>
@@ -487,7 +572,7 @@ function AppointmentForm() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full inline-flex items-center justify-center rounded-xl bg-[#134E39] hover:bg-[#0E3D2C] text-white font-bold uppercase tracking-wider py-4 text-xs transition-colors shadow-md disabled:opacity-50 cursor-pointer"
+                    className="w-full inline-flex items-center justify-center rounded-xl bg-[#134E39] hover:bg-[#0E3D2C] text-white font-bold uppercase tracking-wider py-4 px-6 text-xs sm:text-sm transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer"
                   >
                     {submitting ? (
                       <span className="flex items-center">
@@ -519,11 +604,10 @@ function AppointmentForm() {
                     </h3>
                     <p className="text-sm text-neutral-600 dark:text-neutral-400 max-w-md mx-auto leading-relaxed">
                       Thank you! Your clinical appointment inquiry is now saved into our{' '}
-                      <strong className="text-mint-605 dark:text-mint-400">
+                      <strong className="text-emerald-600 dark:text-emerald-400">
                         Sanity Patient Inquiry Schema
                       </strong>
-                      . You can view, verify, or change its state in real-time inside the Simulated Sanity Studio
-                      drawer panel.
+                      .
                     </p>
                   </div>
                   <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900/60 text-xs text-neutral-500 font-medium border border-neutral-200/50 dark:border-neutral-800">
@@ -532,7 +616,7 @@ function AppointmentForm() {
                   </div>
                   <button
                     onClick={() => setShowSuccess(false)}
-                    className="px-6 py-2.5 rounded-xl bg-neutral-900 text-white hover:bg-mint-600 dark:bg-neutral-800 dark:hover:bg-mint-500 text-xs font-bold uppercase tracking-wider cursor-pointer"
+                    className="px-6 py-2.5 rounded-xl bg-neutral-900 text-white hover:bg-emerald-600 dark:bg-neutral-800 dark:hover:bg-emerald-500 text-xs font-bold uppercase tracking-wider cursor-pointer"
                   >
                     Book another consultation
                   </button>
