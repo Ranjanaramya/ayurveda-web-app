@@ -4,7 +4,6 @@ export const inquiry = defineType({
   name: 'patientInquiry',
   title: 'Patient Inquiry Records',
   type: 'document',
-  readOnly: true, // Auto-logged from frontend form
   fields: [
     defineField({
       name: 'patientName',
@@ -32,13 +31,23 @@ export const inquiry = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'doctorName',
+      title: 'Requested Doctor',
+      type: 'string',
+    }),
+    defineField({
+      name: 'treatmentName',
+      title: 'Requested Treatment',
+      type: 'string',
+    }),
+    defineField({
       name: 'doctorId',
-      title: 'Requested Doctor Ref',
+      title: 'Doctor ID Ref',
       type: 'string',
     }),
     defineField({
       name: 'treatmentId',
-      title: 'Requested Treatment Ref',
+      title: 'Treatment ID Ref',
       type: 'string',
     }),
     defineField({
@@ -51,8 +60,38 @@ export const inquiry = defineType({
       title: 'Booking Status',
       type: 'string',
       options: {
-        list: ['Pending', 'Confirmed', 'Completed'],
+        list: [
+          { title: 'Pending Approval', value: 'Pending' },
+          { title: 'Confirmed Slot', value: 'Confirmed' },
+          { title: 'Completed Visit', value: 'Completed' },
+        ],
       },
+      initialValue: 'Pending',
+    }),
+    defineField({
+      name: 'createdAt',
+      title: 'Submitted At',
+      type: 'datetime',
+      initialValue: () => new Date().toISOString(),
     }),
   ],
+  preview: {
+    select: {
+      title: 'patientName',
+      doctor: 'doctorName',
+      treatment: 'treatmentName',
+      date: 'preferredDate',
+      time: 'preferredTime',
+      phone: 'phone',
+      status: 'status',
+    },
+    prepare({ title, doctor, treatment, date, time, phone, status }) {
+      const docStr = doctor || 'Any Specialist';
+      const treatStr = treatment || 'General Consultation';
+      return {
+        title: title ? `${title} (${phone || 'No Phone'})` : 'Untitled Inquiry',
+        subtitle: `${docStr} • ${treatStr} • ${date || 'Date TBD'} (${time || 'Time TBD'}) [${status || 'Pending'}]`,
+      };
+    },
+  },
 });

@@ -8,7 +8,7 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem('treatment').title('Treatments'),
       S.documentTypeListItem('blog').title('Blog Posts'),
       S.documentTypeListItem('gallery').title('Gallery Items'),
-      S.documentTypeListItem('patientInquiry').title('Patient Inquiries'),
+      S.documentTypeListItem('patientInquiry').title('Patient Appointments & Inquiries'),
       S.documentTypeListItem('contactMessage').title('Contact Us Messages'),
       ...S.documentTypeListItems().filter(
         (item) =>

@@ -652,7 +652,7 @@ export default function HomePage() {
           Real Stories of Life-Changing Recoveries
         </h2>
         <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-          Hear directly from individuals who achieved remarkable physical restoration. Reviews are verified with Patient IDs and approved via Sanity Studio.
+          Hear directly from individuals who achieved remarkable physical restoration. Reviews are verified with Patient IDs and approved by medical management.
         </p>
       </div>
 

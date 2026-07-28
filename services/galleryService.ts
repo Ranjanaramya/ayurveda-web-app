@@ -1,6 +1,13 @@
-import { client } from '@/sanity/lib/client'; // Sanity client path-ஐ சரிபார்க்கவும்
+import { client } from '@/sanity/lib/client';
+import { projectId } from '@/sanity/env';
+import { getGallery } from '@/lib/mockSanity';
+
+const isMock = !projectId || projectId === 'mock-id';
 
 export async function getGalleryItems() {
+  if (isMock) {
+    return getGallery();
+  }
   try {
     const query = `*[_type == "gallery"] {
       "_id": _id,
@@ -10,9 +17,12 @@ export async function getGalleryItems() {
       "image": image
     }`;
     const data = await client.fetch(query);
-    return data || [];
+    if (Array.isArray(data) && data.length > 0) {
+      return data;
+    }
+    return getGallery();
   } catch (error) {
-    console.error("Error fetching gallery items:", error);
-    return [];
+    console.warn('Unable to reach Sanity API for gallery items, using local fallback:', error);
+    return getGallery();
   }
 }
